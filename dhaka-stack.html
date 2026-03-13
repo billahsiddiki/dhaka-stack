@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dhaka Stack">
+<meta name="theme-color" content="#FEFCF8">
+<meta name="description" content="Dhaka Stack v5 — Personal Nutrition OS for Farmgate, Dhaka">
+<title>Dhaka Stack v5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ RESET ═══════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+
+/* ═══ VARIABLES ════════════════════════════════════ */
+:root{
+  --paper:#FEFCF8; --cream:#F5F0E8; --warm:#EDE5D8; --rule:#D5CCC0;
+  --ink:#1A160F; --ink2:#3A3228; --ink3:#6B5E4E;
+  --amber:#C67C0E; --amber2:#E09020; --amberl:#FDF3E0; --amberll:#FFFAEF;
+  --green:#1B5E3B; --green2:#2E7D52; --green3:#4CAF7D; --greenl:#E8F5EE;
+  --red:#B03030; --redl:#FDEAEA;
+  --blue:#1E4A8A; --bluel:#E8EFF9;
+  --teal:#1A7A6A; --teall:#E4F5F2;
+  --grape:#6B3A8A; --grapel:#F2E8FA;
+  --shadow:0 2px 12px rgba(26,22,15,.08);
+  --shadow2:0 4px 24px rgba(26,22,15,.14);
+  --sans:'Source Sans 3',sans-serif;
+  --serif:'Playfair Display',Georgia,serif;
+  --mono:'JetBrains Mono',monospace;
+  --safe-top:env(safe-area-inset-top);
+  --safe-bot:env(safe-area-inset-bottom);
+  --safe-l:env(safe-area-inset-left);
+  --safe-r:env(safe-area-inset-right);
+}
+
+/* ═══ BASE ═════════════════════════════════════════ */
+html,body{height:100%;overflow:hidden;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;}
+body{display:flex;flex-direction:column;}
+
+/* ═══ STATUS BAR SPACER ════════════════════════════ */
+.status-sp{height:var(--safe-top);background:var(--paper);flex-shrink:0;}
+
+/* ═══ APP HEADER ════════════════════════════════════ */
+.app-header{
+  flex-shrink:0;background:var(--paper);border-bottom:2px solid var(--ink);
+  padding:12px 20px 10px;display:flex;align-items:center;justify-content:space-between;
+}
+.app-logo{font-family:var(--serif);font-size:22px;font-weight:900;color:var(--ink);letter-spacing:-.5px;}
+.app-logo span{color:var(--amber2);}
+.app-date{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.5px;}
+.app-day-badge{font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px;}
+.day-cook{background:var(--amberl);color:var(--amber);border:1px solid rgba(198,124,14,.25);}
+.day-delivery{background:var(--bluel);color:var(--blue);border:1px solid rgba(30,74,138,.2);}
+.day-normal{background:var(--cream);color:var(--ink3);border:1px solid var(--rule);}
+
+/* ═══ TABS ══════════════════════════════════════════ */
+.tab-bar{
+  flex-shrink:0;display:flex;background:var(--paper);
+  border-bottom:2px solid var(--ink);overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none;
+  padding:0 4px;
+}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab{
+  flex:1;min-width:60px;padding:10px 8px 8px;
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--ink3);border-bottom:3px solid transparent;
+  margin-bottom:-2px;cursor:pointer;transition:color .2s,border-color .2s;
+  text-align:center;user-select:none;white-space:nowrap;
+}
+.tab-icon{font-size:18px;display:block;margin-bottom:3px;}
+.tab.active{color:var(--amber2);border-bottom-color:var(--amber2);}
+.tab:active{background:var(--amberl);}
+
+/* ═══ PAGE SYSTEM ══════════════════════════════════ */
+.pages{flex:1;overflow:hidden;position:relative;}
+.page{
+  position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding-bottom:calc(20px + var(--safe-bot));display:none;background:var(--paper);
+}
+.page.active{display:block;}
+
+/* ═══ STICKY SECTION HEADER ════════════════════════ */
+.pg-hd{
+  position:sticky;top:0;z-index:20;background:var(--paper);
+  border-bottom:1px solid var(--rule);padding:10px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.pg-hd-t{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--amber);text-transform:uppercase;}
+.pg-hd-btn{
+  font-family:var(--mono);font-size:10px;color:var(--ink3);padding:5px 12px;
+  border:1px solid var(--rule);border-radius:20px;cursor:pointer;background:white;
+  transition:all .15s;
+}
+.pg-hd-btn:active{background:var(--cream);border-color:var(--ink3);}
+
+/* ═══ CARDS & CALLOUTS ══════════════════════════════ */
+.card{background:white;border:1px solid var(--rule);border-radius:10px;box-shadow:var(--shadow);}
+.callout{padding:14px 16px;border-left:4px solid var(--amber);background:var(--amberl);border-radius:0 8px 8px 0;margin:12px 0;}
+.callout.g{border-color:var(--green2);background:var(--greenl);}
+.callout.r{border-color:var(--red);background:var(--redl);}
+.callout.b{border-color:var(--blue);background:var(--bluel);}
+.callout.t{border-color:var(--teal);background:var(--teall);}
+.callout-lbl{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--amber);margin-bottom:5px;}
+.callout.g .callout-lbl{color:var(--green2);}
+.callout.r .callout-lbl{color:var(--red);}
+.callout.b .callout-lbl{color:var(--blue);}
+.callout.t .callout-lbl{color:var(--teal);}
+.callout p{font-size:13px;color:var(--ink2);line-height:1.65;margin:0;}
+
+/* ═══ BADGES ════════════════════════════════════════ */
+.bdg{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;display:inline-block;letter-spacing:.3px;white-space:nowrap;}
+.bg{background:var(--greenl);color:var(--green2);}
+.ba{background:var(--amberl);color:var(--amber);}
+.br{background:var(--redl);color:var(--red);}
+.bb{background:var(--bluel);color:var(--blue);}
+.bt{background:var(--teall);color:var(--teal);}
+.bp{background:var(--grapel);color:var(--grape);}
+
+/* ═══ TABLES ════════════════════════════════════════ */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:400px;}
+.tbl th{background:var(--ink);color:var(--cream);padding:8px 12px;text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;font-weight:600;}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--rule);color:var(--ink2);vertical-align:top;}
+.tbl tr:last-child td{border:none;}
+.tbl tr:hover td{background:var(--amberll);}
+.tbl td:first-child{color:var(--ink);font-weight:600;}
+.tbl .total-row td{background:var(--amberl);font-weight:700;}
+
+/* ═══ PROGRESS BAR ══════════════════════════════════ */
+.prog-wrap{padding:12px 20px 8px;background:var(--paper);}
+.prog-track{background:var(--warm);border-radius:3px;height:6px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green3));border-radius:3px;transition:width .4s ease;}
+.prog-lbl{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:6px;display:flex;justify-content:space-between;}
+
+/* ═══════════════════════════════════════════════════
+   TODAY PAGE
+═══════════════════════════════════════════════════ */
+.today-banner{
+  background:linear-gradient(135deg,var(--ink) 0%,#2C2416 50%,#1B3A28 100%);
+  padding:20px 20px 24px;position:relative;overflow:hidden;
+}
+.today-banner::after{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none;}
+.today-eyebrow{font-family:var(--mono);font-size:10px;color:var(--amber2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;opacity:.7;}
+.today-day{font-family:var(--serif);font-size:40px;font-weight:900;color:#F5EFE4;line-height:1;margin-bottom:4px;}
+.today-phase{font-size:13px;color:#999;margin-bottom:16px;}
+.today-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.06);}
+.today-stat{padding:12px;background:rgba(255,255,255,.04);text-align:center;}
+.ts-val{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--amber2);}
+.ts-lbl{font-family:var(--mono);font-size:9px;color:#777;letter-spacing:.5px;margin-top:2px;}
+
+.today-section{padding:16px 20px 0;}
+.today-sec-t{font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--ink);}
+
+.chk-item{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--rule);cursor:pointer;user-select:none;
+  transition:background .1s;
+}
+.chk-item:last-child{border:none;}
+.chk-item:active{background:var(--amberll);}
+.chk-box{
+  width:22px;height:22px;border-radius:4px;border:2px solid var(--rule);
+  flex-shrink:0;margin-top:1px;transition:all .15s;display:flex;align-items:center;justify-content:center;
+}
+.chk-item.done .chk-box{background:var(--green2);border-color:var(--green2);}
+.chk-mark{color:white;font-size:13px;font-weight:700;display:none;}
+.chk-item.done .chk-mark{display:block;}
+.chk-item.done .chk-text{text-decoration:line-through;color:var(--ink3);}
+.chk-text{font-size:14px;font-weight:600;color:var(--ink);}
+.chk-sub{font-size:12px;color:var(--ink3);margin-top:2px;line-height:1.5;}
+
+.tonight-card{
+  margin:16px 20px;background:var(--ink);border-radius:10px;padding:16px;
+  border-left:4px solid var(--amber2);
+}
+.tn-label{font-family:var(--mono);font-size:9px;color:var(--amber2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.tn-text{font-size:14px;color:#F5EFE4;line-height:1.6;}
+
+.protein-tracker{
+  margin:16px 20px;background:white;border:1px solid var(--rule);border-radius:10px;
+  padding:16px;box-shadow:var(--shadow);
+}
+.pt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.pt-title{font-family:var(--serif);font-size:16px;font-weight:700;}
+.pt-target{font-family:var(--mono);font-size:10px;color:var(--ink3);}
+.pt-bar{background:var(--warm);border-radius:4px;height:12px;overflow:hidden;margin-bottom:8px;}
+.pt-fill{height:100%;background:linear-gradient(90deg,var(--green2),var(--green3));border-radius:4px;transition:width .5s;}
+.pt-nums{display:flex;gap:8px;flex-wrap:wrap;}
+.pt-btn{
+  flex:1;min-width:60px;padding:8px;border-radius:6px;border:1px solid var(--rule);
+  background:var(--cream);font-family:var(--mono);font-size:11px;font-weight:700;
+  color:var(--amber);cursor:pointer;text-align:center;transition:all .15s;
+}
+.pt-btn:active{background:var(--amberl);}
+.pt-current{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--green2);text-align:center;margin-bottom:4px;}
+.pt-current span{font-size:16px;color:var(--ink3);font-family:var(--mono);}
+.pt-reset{font-family:var(--mono);font-size:10px;color:var(--red);text-align:center;margin-top:8px;cursor:pointer;padding:4px;}
+
+/* ═══════════════════════════════════════════════════
+   SHOP PAGE
+═══════════════════════════════════════════════════ */
+.shop-group-hd{
+  padding:14px 20px 8px;font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:2px;color:var(--ink3);text-transform:uppercase;
+  background:var(--cream);border-bottom:1px solid var(--rule);
+  border-top:1px solid var(--rule);
+}
+.shop-item{
+  display:flex;align-items:center;gap:14px;padding:13px 20px;
+  border-bottom:1px solid var(--rule);cursor:pointer;user-select:none;
+  transition:background .1s;background:white;min-height:58px;
+}
+.shop-item:active{background:var(--amberll);}
+.shop-item.done{background:var(--cream);}
+.shop-item.done .shop-name{text-decoration:line-through;color:var(--ink3);}
+.shop-chk{
+  width:22px;height:22px;border-radius:4px;border:2px solid var(--rule);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.shop-item.done .shop-chk{background:var(--green2);border-color:var(--green2);}
+.shop-chk-mk{color:white;font-size:13px;font-weight:700;display:none;}
+.shop-item.done .shop-chk-mk{display:block;}
+.shop-body{flex:1;}
+.shop-name{font-size:14px;font-weight:700;line-height:1.2;}
+.shop-bn{font-size:11.5px;color:var(--ink3);margin-top:2px;font-style:italic;}
+.shop-qty{font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:700;flex-shrink:0;}
+
+.vendor-msg-card{margin:16px 20px;background:var(--ink);border-radius:10px;overflow:hidden;}
+.vm-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+.vm-title{font-family:var(--serif);font-size:16px;font-weight:700;color:#F5EFE4;}
+.vm-copy-btn{
+  background:var(--amber);color:var(--ink);font-family:var(--mono);font-size:10px;
+  font-weight:700;padding:6px 14px;border-radius:20px;border:none;cursor:pointer;
+  letter-spacing:.5px;transition:all .15s;
+}
+.vm-copy-btn:active{transform:scale(.96);}
+.vm-body{padding:0 16px 16px;}
+.vm-text{font-size:14px;color:#F5EFE4;line-height:1.8;}
+.vm-english{font-size:12px;color:#888;margin-top:8px;line-height:1.6;}
+
+/* ═══════════════════════════════════════════════════
+   COOK PAGE
+═══════════════════════════════════════════════════ */
+.session-pick{display:flex;gap:12px;padding:16px 20px;}
+.session-btn{
+  flex:1;padding:14px 12px;border:2px solid var(--rule);border-radius:10px;
+  text-align:center;cursor:pointer;background:white;transition:all .15s;
+}
+.session-btn.active{border-color:var(--amber);background:var(--amberl);}
+.session-btn:active{transform:scale(.97);}
+.sb-day{font-family:var(--mono);font-size:9px;color:var(--amber);font-weight:700;letter-spacing:1px;margin-bottom:4px;}
+.sb-name{font-family:var(--serif);font-size:15px;font-weight:700;}
+.sb-meta{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:4px;}
+
+.cook-status{
+  margin:0 20px 16px;padding:12px 16px;background:var(--cream);
+  border-radius:8px;border:1px solid var(--rule);
+  display:flex;align-items:center;gap:12px;
+}
+.cs-icon{font-size:22px;}
+.cs-text{font-family:var(--mono);font-size:11px;color:var(--ink3);line-height:1.5;}
+.cs-prog{font-weight:700;color:var(--amber2);}
+
+.cook-steps{padding:0 20px 20px;}
+.cook-step{
+  border:1px solid var(--rule);border-radius:10px;margin-bottom:10px;
+  overflow:hidden;background:white;transition:border-color .2s;box-shadow:var(--shadow);
+}
+.cook-step.active-s{border-color:var(--amber);box-shadow:0 2px 16px rgba(198,124,14,.12);}
+.cook-step.done-s{border-color:var(--green2);opacity:.65;}
+.step-hd{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;}
+.step-num{
+  width:28px;height:28px;border-radius:6px;background:var(--cream);border:1px solid var(--rule);
+  font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;
+}
+.active-s .step-num{background:var(--amberl);border-color:var(--amber);color:var(--amber);}
+.done-s .step-num{background:var(--greenl);border-color:var(--green2);color:var(--green2);}
+.step-ttl{font-size:15px;font-weight:700;flex:1;line-height:1.2;}
+.step-bdg{font-family:var(--mono);font-size:9px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.bdg-act{background:var(--amberl);color:var(--amber);}
+.bdg-pas{background:var(--greenl);color:var(--green2);}
+.bdg-fin{background:var(--greenl);color:var(--green2);}
+
+.step-body{padding:0 14px 14px;display:none;}
+.cook-step.open .step-body{display:block;}
+.step-desc{font-size:13.5px;color:var(--ink2);line-height:1.65;margin-bottom:12px;}
+.step-note{
+  background:var(--amberl);border-radius:6px;padding:10px 12px;
+  font-size:12.5px;color:var(--ink2);line-height:1.6;
+  border-left:3px solid var(--amber);margin-bottom:12px;
+}
+.step-note.g{background:var(--greenl);border-color:var(--green2);}
+.step-note.r{background:var(--redl);border-color:var(--red);}
+
+/* Timer */
+.timer-box{
+  background:var(--cream);border:1px solid var(--rule);border-radius:10px;
+  padding:16px;text-align:center;margin-bottom:12px;
+}
+.timer-lbl{font-family:var(--mono);font-size:9px;color:var(--ink3);letter-spacing:2px;margin-bottom:10px;}
+.timer-disp{
+  font-family:var(--mono);font-size:52px;font-weight:700;
+  color:var(--amber2);line-height:1;letter-spacing:2px;
+}
+.timer-disp.done-t{color:var(--green2);}
+.timer-disp.urgent{color:var(--red);}
+.timer-prog-wrap{background:var(--rule);border-radius:3px;height:4px;margin:12px 0 14px;overflow:hidden;}
+.timer-prog-fill{height:100%;background:var(--amber2);border-radius:3px;transition:width 1s linear;}
+.timer-ctrls{display:flex;gap:8px;justify-content:center;}
+.t-btn{
+  padding:11px 20px;border-radius:8px;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.5px;transition:all .15s;
+}
+.t-btn:active{transform:scale(.96);}
+.t-start{background:var(--amber);color:white;}
+.t-pause{background:white;color:var(--amber);border:1.5px solid var(--amber);}
+.t-reset{background:white;color:var(--ink3);border:1.5px solid var(--rule);}
+
+.step-actions{display:flex;gap:8px;margin-top:4px;}
+.step-act-btn{
+  flex:1;padding:12px;border-radius:8px;border:none;cursor:pointer;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.5px;transition:all .15s;
+}
+.step-act-btn:active{transform:scale(.97);}
+.btn-done{background:var(--green2);color:white;}
+.btn-undo{background:var(--cream);color:var(--ink3);border:1px solid var(--rule);}
+
+/* ═══════════════════════════════════════════════════
+   MEALS PAGE
+═══════════════════════════════════════════════════ */
+.meal-pick{display:flex;gap:12px;padding:16px 20px;}
+.meal-btn{
+  flex:1;padding:14px 12px;border:2px solid var(--rule);border-radius:10px;
+  text-align:center;cursor:pointer;background:white;transition:all .15s;
+}
+.meal-btn.active{border-color:var(--amber);background:var(--amberl);}
+.meal-btn:active{transform:scale(.97);}
+.mb-when{font-family:var(--mono);font-size:9px;color:var(--amber);font-weight:700;letter-spacing:1px;margin-bottom:4px;}
+.mb-name{font-family:var(--serif);font-size:15px;font-weight:700;}
+.mb-cals{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:4px;}
+
+.meal-macros{
+  display:flex;margin:0 20px 16px;border:1px solid var(--rule);border-radius:10px;
+  overflow:hidden;background:white;box-shadow:var(--shadow);
+}
+.macro{flex:1;padding:12px 8px;text-align:center;border-right:1px solid var(--rule);}
+.macro:last-child{border:none;}
+.macro-val{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--amber2);}
+.macro-key{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:2px;letter-spacing:.3px;}
+
+.meal-section{padding:0 20px;}
+.meal-sec-t{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--amber);text-transform:uppercase;margin:14px 0 10px;}
+.ingr-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px dashed var(--rule);
+}
+.ingr-row:last-child{border:none;}
+.ingr-name{font-size:14px;font-weight:600;}
+.ingr-from{font-family:var(--mono);font-size:10px;color:var(--ink3);margin-top:2px;}
+.ingr-amt{font-family:var(--mono);font-size:12px;color:var(--amber);font-weight:700;flex-shrink:0;margin-left:8px;}
+
+.asm-step{
+  display:flex;align-items:flex-start;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--rule);cursor:pointer;transition:background .1s;
+}
+.asm-step:last-child{border:none;}
+.asm-step:active{background:var(--amberll);}
+.asm-step.done-a .asm-text{text-decoration:line-through;color:var(--ink3);}
+.asm-n{
+  width:26px;height:26px;border-radius:6px;background:var(--cream);border:1px solid var(--rule);
+  font-family:var(--mono);font-size:11px;font-weight:700;color:var(--ink3);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s;
+}
+.asm-step.done-a .asm-n{background:var(--greenl);border-color:var(--green2);color:var(--green2);}
+.asm-text{font-size:14px;line-height:1.55;color:var(--ink);}
+.asm-sub{font-size:12px;color:var(--ink3);margin-top:3px;line-height:1.5;}
+.meal-tip{margin:12px 0;background:var(--amberl);border-radius:8px;padding:12px 14px;border-left:3px solid var(--amber);}
+.meal-tip-hd{font-family:var(--mono);font-size:9px;color:var(--amber);font-weight:700;letter-spacing:1px;margin-bottom:4px;}
+.meal-tip-body{font-size:13px;color:var(--ink2);line-height:1.6;}
+.meal-reset-btn{
+  display:block;margin:16px 20px;padding:13px;background:var(--cream);
+  border:1px solid var(--rule);border-radius:8px;font-family:var(--mono);
+  font-size:11px;font-weight:700;color:var(--ink3);cursor:pointer;text-align:center;letter-spacing:.5px;
+}
+.meal-reset-btn:active{background:var(--warm);}
+
+/* ═══════════════════════════════════════════════════
+   GUIDE PAGE
+═══════════════════════════════════════════════════ */
+.guide-intro{padding:16px 20px;background:var(--cream);border-bottom:1px solid var(--rule);}
+.guide-intro p{font-size:13px;color:var(--ink3);line-height:1.65;}
+
+.acc-item{border-bottom:1px solid var(--rule);background:white;}
+.acc-hd{
+  display:flex;align-items:center;gap:12px;padding:14px 20px;cursor:pointer;
+  transition:background .15s;user-select:none;
+}
+.acc-hd:active{background:var(--amberll);}
+.acc-num{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--amber);width:28px;flex-shrink:0;}
+.acc-title{font-family:var(--serif);font-size:16px;font-weight:700;flex:1;}
+.acc-arrow{font-family:var(--mono);font-size:12px;color:var(--ink3);transition:transform .2s;flex-shrink:0;}
+.acc-item.open .acc-arrow{transform:rotate(180deg);}
+.acc-body{display:none;padding:0 20px 16px;border-top:1px solid var(--rule);background:var(--paper);}
+.acc-item.open .acc-body{display:block;}
+
+.guide-p{font-size:13.5px;color:var(--ink2);line-height:1.7;margin-bottom:10px;}
+.guide-h4{font-family:var(--serif);font-size:15px;font-weight:700;color:var(--amber);margin:16px 0 8px;}
+.guide-h3{font-family:var(--serif);font-size:17px;font-weight:700;margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--rule);}
+.guide-list{list-style:none;margin:8px 0;}
+.guide-list li{font-size:13px;color:var(--ink2);padding:6px 0;border-bottom:1px dashed var(--rule);line-height:1.55;display:flex;gap:8px;align-items:flex-start;}
+.guide-list li:last-child{border:none;}
+.guide-list li::before{content:'→';color:var(--amber);font-weight:700;flex-shrink:0;margin-top:1px;}
+
+.do-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}
+.do-col,.dont-col{border-radius:8px;overflow:hidden;border:1px solid var(--rule);}
+.do-head,.dont-head{padding:8px 12px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.do-head{background:var(--greenl);color:var(--green2);border-bottom:1px solid rgba(46,125,82,.2);}
+.dont-head{background:var(--redl);color:var(--red);border-bottom:1px solid rgba(176,48,48,.2);}
+.dd-item{font-size:12.5px;padding:8px 12px;border-bottom:1px solid var(--rule);background:white;line-height:1.45;}
+.dd-item:last-child{border:none;}
+.do-col .dd-item::before{content:'✓ ';color:var(--green2);font-weight:700;}
+.dont-col .dd-item::before{content:'✕ ';color:var(--red);font-weight:700;}
+
+.spice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0;}
+.spice-card{background:white;border:1px solid var(--rule);border-radius:8px;padding:10px;}
+.spice-name{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.spice-amt{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--amber2);line-height:1;margin-bottom:2px;}
+.spice-why{font-size:11px;color:var(--ink3);}
+
+.cheatsheet{background:white;border:2px solid var(--ink);border-radius:10px;overflow:hidden;margin:8px 0 0;}
+.cs-head{background:var(--ink);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.cs-ttl{font-family:var(--serif);font-size:16px;font-weight:700;color:#F5EFE4;}
+.cs-meta{font-family:var(--mono);font-size:9px;color:var(--amber2);}
+.cs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;}
+.cs-cell{padding:10px 12px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);}
+.cs-cell:nth-child(even){border-right:none;}
+.cs-lbl{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px;}
+.cs-val{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--amber);}
+.cs-note{font-size:11px;color:var(--ink3);margin-top:1px;}
+
+.emg-grid{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0;}
+.emg-card{background:white;border:1px solid var(--rule);border-radius:8px;padding:11px 14px;border-left:4px solid var(--amber);}
+.emg-card.r{border-color:var(--red);}
+.emg-card.g{border-color:var(--green2);}
+.emg-sit{font-family:var(--mono);font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--amber);margin-bottom:4px;}
+.emg-card.r .emg-sit{color:var(--red);}
+.emg-card.g .emg-sit{color:var(--green2);}
+.emg-resp{font-size:13px;color:var(--ink2);line-height:1.55;}
+
+/* ═══ ALARM OVERLAY ═════════════════════════════════ */
+.alarm{
+  position:fixed;inset:0;z-index:1000;background:rgba(26,22,15,.9);
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+}
+.alarm.show{display:flex;}
+.alarm-emoji{font-size:56px;animation:pulse .8s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+.alarm-msg{font-family:var(--serif);font-size:24px;font-weight:700;color:white;text-align:center;padding:0 30px;}
+.alarm-sub{font-family:var(--mono);font-size:12px;color:var(--amber2);text-align:center;padding:0 30px;line-height:1.6;}
+.alarm-dismiss{
+  background:var(--amber);color:var(--ink);font-family:var(--mono);font-size:13px;
+  font-weight:700;padding:14px 36px;border-radius:30px;border:none;cursor:pointer;letter-spacing:1px;
+}
+.alarm-dismiss:active{transform:scale(.97);}
+
+/* ═══ TOAST ═════════════════════════════════════════ */
+.toast{
+  position:fixed;bottom:calc(32px + var(--safe-bot));left:50%;
+  transform:translateX(-50%) translateY(16px);
+  background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:12px;
+  font-weight:700;padding:9px 20px;border-radius:20px;letter-spacing:.5px;
+  opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;z-index:900;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══ INSTALL PROMPT ════════════════════════════════ */
+.install-banner{
+  margin:16px 20px;background:var(--bluel);border:1px solid rgba(30,74,138,.2);
+  border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;
+}
+.install-banner.hidden{display:none;}
+.install-icon{font-size:28px;flex-shrink:0;}
+.install-text{flex:1;}
+.install-title{font-size:14px;font-weight:700;color:var(--blue);margin-bottom:2px;}
+.install-sub{font-size:12px;color:var(--blue);opacity:.7;line-height:1.5;}
+.install-close{color:var(--ink3);font-size:18px;cursor:pointer;padding:4px;flex-shrink:0;}
+
+/* ═══ MISC ══════════════════════════════════════════ */
+.px20{padding:0 20px;}
+.pt12{padding-top:12px;}
+.mt12{margin-top:12px;}
+.hl{background:var(--amberl);padding:1px 5px;border-radius:2px;font-weight:700;}
+.green{color:var(--green2);}
+.red-c{color:var(--red);}
+strong{font-weight:700;}
+em{font-style:italic;}
+</style>
+</head>
+<body>
+
+<div class="status-sp"></div>
+
+<!-- ─── HEADER ─── -->
+<div class="app-header">
+  <div class="app-logo">Dhaka<span>Stack</span></div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <div class="app-day-badge" id="dayBadge">SUN</div>
+    <div class="app-date" id="dateLabel"></div>
+  </div>
+</div>
+
+<!-- ─── TABS ─── -->
+<div class="tab-bar">
+  <div class="tab active" onclick="switchTab('today')"><span class="tab-icon">📅</span>TODAY</div>
+  <div class="tab" onclick="switchTab('shop')"><span class="tab-icon">🛒</span>SHOP</div>
+  <div class="tab" onclick="switchTab('cook')"><span class="tab-icon">🍲</span>COOK</div>
+  <div class="tab" onclick="switchTab('meals')"><span class="tab-icon">🥣</span>MEALS</div>
+  <div class="tab" onclick="switchTab('guide')"><span class="tab-icon">📚</span>GUIDE</div>
+</div>
+
+<div class="pages">
+
+<!-- ════════════════════════════════════════════════
+     TODAY PAGE
+════════════════════════════════════════════════ -->
+<div class="page active" id="page-today">
+  <!-- Banner -->
+  <div class="today-banner">
+    <div class="today-eyebrow">Dhaka Stack v5 · Farmgate</div>
+    <div class="today-day" id="todayDayName">Sunday</div>
+    <div class="today-phase" id="todayPhase">Loading...</div>
+    <div class="today-stats">
+      <div class="today-stat"><div class="ts-val" id="statProtein">155g</div><div class="ts-lbl">PROTEIN GOAL</div></div>
+      <div class="today-stat"><div class="ts-val" id="statCalories">1,700</div><div class="ts-lbl">KCAL TARGET</div></div>
+      <div class="today-stat"><div class="ts-val" id="statCost">~240৳</div><div class="ts-lbl">DAILY BUDGET</div></div>
+    </div>
+  </div>
+
+  <!-- Install banner -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-icon">📱</div>
+    <div class="install-text">
+      <div class="install-title">Add to Home Screen</div>
+      <div class="install-sub">Safari → Share → "Add to Home Screen" for offline access + full-screen mode on iPhone & iPad</div>
+    </div>
+    <div class="install-close" onclick="document.getElementById('installBanner').classList.add('hidden')">✕</div>
+  </div>
+
+  <!-- Protein tracker -->
+  <div class="protein-tracker">
+    <div class="pt-header">
+      <div class="pt-title">Protein Today</div>
+      <div class="pt-target">Target: 155g</div>
+    </div>
+    <div class="pt-current"><span id="ptCurrent">0</span><span>g</span></div>
+    <div class="pt-bar"><div class="pt-fill" id="ptFill" style="width:0%"></div></div>
+    <div class="pt-nums">
+      <div class="pt-btn" onclick="addProtein(9)">+9g<br><span style="font-size:9px;color:var(--ink3);">duck egg</span></div>
+      <div class="pt-btn" onclick="addProtein(7)">+7g<br><span style="font-size:9px;color:var(--ink3);">chk egg</span></div>
+      <div class="pt-btn" onclick="addProtein(31)">+31g<br><span style="font-size:9px;color:var(--ink3);">chicken</span></div>
+      <div class="pt-btn" onclick="addProtein(29)">+29g<br><span style="font-size:9px;color:var(--ink3);">beef</span></div>
+      <div class="pt-btn" onclick="addProtein(19)">+19g<br><span style="font-size:9px;color:var(--ink3);">chickpea</span></div>
+    </div>
+    <div class="pt-reset" onclick="resetProtein()">↺ Reset for today</div>
+  </div>
+
+  <!-- Daily non-negotiables -->
+  <div class="today-section">
+    <div class="today-sec-t">Daily Non-Negotiables</div>
+    <div id="dailyChecklist"></div>
+  </div>
+
+  <!-- Tonight card -->
+  <div class="tonight-card" id="tonightCard">
+    <div class="tn-label">TONIGHT'S ACTION</div>
+    <div class="tn-text" id="tonightText">Loading...</div>
+  </div>
+
+  <!-- Emergency protocols -->
+  <div class="today-section">
+    <div class="today-sec-t">Emergency Protocols</div>
+    <div class="emg-grid">
+      <div class="emg-card r"><div class="emg-sit">NO MONEY</div><div class="emg-resp">6 eggs + 100g dal + 500ml milk = 95g protein, ৳85. Your absolute floor.</div></div>
+      <div class="emg-card"><div class="emg-sit">NO TIME TO COOK</div><div class="emg-resp">Soaked chickpeas + peanuts + milk. Zero cooking. 40g protein. Grab and go.</div></div>
+      <div class="emg-card"><div class="emg-sit">BINGE URGE (11 PM)</div><div class="emg-resp">250ml UHT milk + 40g peanuts. Wait 15 min. 90% of urges resolve. If still hungry: C-6.</div></div>
+      <div class="emg-card g"><div class="emg-sit">ALREADY BINGED</div><div class="emg-resp">Next meal: normal system. Zero guilt. Zero skipping. One meal = 4.8% of your week.</div></div>
+      <div class="emg-card"><div class="emg-sit">SICK DAY</div><div class="emg-resp">Garlic+ginger bone broth. 4 boiled eggs. 500ml milk. No full meals.</div></div>
+      <div class="emg-card r"><div class="emg-sit">EXAM MORNING</div><div class="emg-resp">500ml UHT milk + 2 raw eggs + 3 dates + kalonji. Shake. 30g protein. 3 minutes.</div></div>
+    </div>
+  </div>
+  <div style="height:20px;"></div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     SHOP PAGE
+════════════════════════════════════════════════ -->
+<div class="page" id="page-shop">
+  <div class="pg-hd">
+    <span class="pg-hd-t">Karwan Bazar · Sunday 6–9 AM</span>
+    <span class="pg-hd-btn" onclick="resetShop()">Clear All</span>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="shopProg" style="width:0%"></div></div>
+    <div class="prog-lbl"><span id="shopProgLabel">0 of 25 items</span><span id="shopCostLabel">Est. ~৳950–1,200</span></div>
+  </div>
+
+  <div id="shopListHTML"></div>
+
+  <!-- Friday Vendor Message -->
+  <div class="vendor-msg-card" style="margin:16px 20px;">
+    <div class="vm-head">
+      <div class="vm-title">Friday Vendor Order</div>
+      <button class="vm-copy-btn" onclick="copyVendorMsg()">Copy 📋</button>
+    </div>
+    <div class="vm-body">
+      <div class="vm-text">"ভাই, শুক্রবার টপসাইড লিন বিফ ৪০০গ্রাম, কলিজা ১৫০গ্রাম, হার্ট ১৫০গ্রাম, নলার হাড্ডি ৩০০গ্রাম দরকার। আগামীকাল ডেলিভারি হবে কি?"</div>
+      <div class="vm-english">English: "Bhai, Friday I need: topside lean beef 400g, liver (kolija) 150g, heart 150g, marrow bones (nolar haddi) 300g. Can you deliver tomorrow?"<br><br>
+      Cost: Topside 400g ≈ ৳310 · Liver 150g ≈ ৳35–60 · Heart 150g ≈ ৳45–70 · Bones (often FREE) ≈ ৳0–30 · Total ≈ ৳390–470</div>
+    </div>
+  </div>
+
+  <div style="margin:0 20px 16px;" class="callout b">
+    <div class="callout-lbl">Karwan Bazar Navigation from Farmgate</div>
+    <p>South ~1km. Rickshaw ৳15, walk 12 min. West gate: <strong>Fish left front · Chicken/Meat center-right · Veg left middle · Dal/Dry goods rear.</strong> Go Sunday 6–9 AM. Ask "পান্তা মূল?" = "Last price?" for 10–20% off.</p>
+  </div>
+  <div style="height:20px;"></div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     COOK PAGE
+════════════════════════════════════════════════ -->
+<div class="page" id="page-cook">
+  <div class="pg-hd">
+    <span class="pg-hd-t">Cook Protocol</span>
+    <span class="pg-hd-btn" onclick="resetCook()">Reset</span>
+  </div>
+
+  <div class="session-pick">
+    <div class="session-btn active" id="sess-btn-A" onclick="selectSession('A')">
+      <div class="sb-day">SUNDAY NIGHT</div>
+      <div class="sb-name">Chicken + Eggs</div>
+      <div class="sb-meta">8 min active · 35 min total<br>Produces Mon–Thu supply</div>
+    </div>
+    <div class="session-btn" id="sess-btn-B" onclick="selectSession('B')">
+      <div class="sb-day">FRIDAY EVENING</div>
+      <div class="sb-name">Beef + Organs</div>
+      <div class="sb-meta">10 min active · 30 min total<br>Produces Fri–Mon supply</div>
+    </div>
+  </div>
+
+  <div class="cook-status" id="cookStatus">
+    <div class="cs-icon">📋</div>
+    <div class="cs-text">Tap a step to expand · Start timer · Mark done when complete<br>
+    <span class="cs-prog" id="cookProgText">0 of 7 steps complete</span></div>
+  </div>
+
+  <div class="cook-steps" id="cookStepContainer"></div>
+
+  <!-- Spice Blend Reference -->
+  <div style="margin:0 20px 20px;">
+    <div class="callout t">
+      <div class="callout-lbl">Master Spice Blend — Mix Once Per Month</div>
+      <p>Mix into glass jar (C-7). Use 2 tsp per cook session. Lasts 5 weeks at 2 sessions/week.</p>
+    </div>
+    <div class="spice-grid" style="margin-top:8px;">
+      <div class="spice-card"><div class="spice-name">Cumin Powder</div><div class="spice-amt">4 tsp</div><div class="spice-why">Earthy base, digestive</div></div>
+      <div class="spice-card"><div class="spice-name">Turmeric</div><div class="spice-amt">3 tsp</div><div class="spice-why">Anti-inflammatory, needs pepper</div></div>
+      <div class="spice-card"><div class="spice-name">Coriander</div><div class="spice-amt">3 tsp</div><div class="spice-why">Floral, citrusy</div></div>
+      <div class="spice-card"><div class="spice-name">Garlic Powder</div><div class="spice-amt">3 tsp</div><div class="spice-why">Backup to fresh garlic</div></div>
+      <div class="spice-card"><div class="spice-name">Black Pepper</div><div class="spice-amt">2 tsp</div><div class="spice-why">2,000% curcumin absorption</div></div>
+      <div class="spice-card"><div class="spice-name">Chili Powder</div><div class="spice-amt">1.5 tsp</div><div class="spice-why">Heat, capsaicin</div></div>
+      <div class="spice-card"><div class="spice-name">Ginger Powder</div><div class="spice-amt">1.5 tsp</div><div class="spice-why">Anti-nausea, beef essential</div></div>
+      <div class="spice-card"><div class="spice-name">Smoked Paprika</div><div class="spice-amt">1 tsp</div><div class="spice-why">Smoky depth (optional)</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     MEALS PAGE
+════════════════════════════════════════════════ -->
+<div class="page" id="page-meals">
+  <div class="pg-hd">
+    <span class="pg-hd-t">Meal Assembly</span>
+  </div>
+
+  <div class="meal-pick">
+    <div class="meal-btn active" id="meal-btn-1" onclick="selectMeal(1)">
+      <div class="mb-when">9 AM – 1 PM</div>
+      <div class="mb-name">Break-Fast</div>
+      <div class="mb-cals">660 kcal · 58g protein · ~95৳</div>
+    </div>
+    <div class="meal-btn" id="meal-btn-2" onclick="selectMeal(2)">
+      <div class="mb-when">6 PM – 9 PM</div>
+      <div class="mb-name">Main Meal</div>
+      <div class="mb-cals">760 kcal · 97g protein · ~145৳</div>
+    </div>
+  </div>
+
+  <div id="mealPageContent"></div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+     GUIDE PAGE
+════════════════════════════════════════════════ -->
+<div class="page" id="page-guide">
+  <div class="pg-hd">
+    <span class="pg-hd-t">Full Reference Guide</span>
+    <span class="pg-hd-btn" onclick="expandAllGuide()">Expand All</span>
+  </div>
+  <div class="guide-intro">
+    <p>Tap any section to expand. All 16 sections from the complete Dhaka Stack v5 system. Every rule, table, and protocol — searchable and organized.</p>
+  </div>
+
+  <!-- 00 Philosophy -->
+  <div class="acc-item" id="acc-00">
+    <div class="acc-hd" onclick="toggleAcc('00')"><div class="acc-num">00</div><div class="acc-title">System Philosophy</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout g"><div class="callout-lbl">Why You Gained 20 kg — The Real Reason</div><p>Not laziness. Not willpower failure. Your <strong>default environment was broken</strong>. Dhaka takeout is calorie-dense, protein-poor, oil-heavy, and decision-free. The fix is not discipline — it is replacing a bad default with a better one.</p></div>
+      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Bangladesh Rice — A Real Reason to Switch</div><p>Bangladeshi rice has documented inorganic arsenic contamination (0.2–0.4 mg/kg). Switching to chickpeas, sweet potato, and oats eliminates this exposure while giving better fiber, lower GI, and more micronutrients.</p></div>
+      <div class="guide-h3">The Three Laws</div>
+      <div class="callout b"><div class="callout-lbl">Law 1 — Automate Decisions</div><p>Every food choice made in real time is a system failure. This system pre-makes every decision. You follow the script.</p></div>
+      <div class="callout b" style="margin-top:8px;"><div class="callout-lbl">Law 2 — Protein First, Always</div><p>Protein builds muscle, kills hunger (CCK + PYY hormones), and protects muscle during a cut. Every meal decision starts: did I hit protein?</p></div>
+      <div class="callout b" style="margin-top:8px;"><div class="callout-lbl">Law 3 — Cost Per Gram of Protein</div><p>Cheap food that is protein-poor is expensive. Measure cost per 30g of protein — not cost per meal.</p></div>
+      <div class="guide-h3">Your Numbers</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Metric</th><th>Now</th><th>Target</th></tr></thead>
+        <tbody>
+          <tr><td>Weight</td><td>88 kg</td><td class="green">71–74 kg</td></tr>
+          <tr><td>Body Fat</td><td>~25–27%</td><td class="green">13–15%</td></tr>
+          <tr><td>Daily Protein</td><td>~80–90g</td><td class="green">155–165g</td></tr>
+          <tr><td>Daily Calories</td><td>~2,400+ (takeout)</td><td class="green">1,600–1,800</td></tr>
+          <tr><td>Daily Spend</td><td>~৳500–1,000</td><td class="green">~৳240–280</td></tr>
+          <tr><td>Food Decisions/Day</td><td>10–15 real-time</td><td class="green">0</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Calorie Target — Why Not Lower</div><p>At 88 kg with gym training, a 700–900 kcal deficit destroys muscle. McMaster study (Longland et al. 2016): 300–500 kcal max deficit. Corrected target: <strong>1,600–1,800 kcal/day.</strong></p></div>
+    </div>
+  </div>
+
+  <!-- 01 Kitchen -->
+  <div class="acc-item" id="acc-01">
+    <div class="acc-hd" onclick="toggleAcc('01')"><div class="acc-num">01</div><div class="acc-title">Kitchen Lab Setup</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout"><div class="callout-lbl">Total one-time cost: ~৳2,500</div><p>Less than 5 days of current takeout spend. Three items: induction cooker, stainless pot, 6 containers.</p></div>
+      <div class="guide-h3">Equipment — Buy in This Order</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Item</th><th>Spec</th><th>Cost</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td>🔥 Induction Cooker</td><td>1000–1500W, dial (not digital)</td><td>৳1,200–1,800</td><td>Elephant Road 2F or Daraz</td></tr>
+          <tr><td>🍲 Stainless Steel Pot 4–5L</td><td>With tight lid. Stainless ONLY.</td><td>৳400–700</td><td>Karwan Bazar housewares, New Market</td></tr>
+          <tr><td>📦 6 Airtight Containers</td><td>Rectangle, Lock&amp;Lock style</td><td>৳550–800 total</td><td>New Market basement</td></tr>
+        </tbody>
+      </table></div>
+      <div class="guide-h3">Container System</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Container</th><th>Role</th><th>Life</th></tr></thead>
+        <tbody>
+          <tr><td>C-1 (2.5L)</td><td>🥩 MEAT — Mon–Thu: chicken / Fri–Mon: beef</td><td>5–6 days</td></tr>
+          <tr><td>C-2 (1.5L)</td><td>🥚 EGGS — 10–12 boiled, peeled, ready to grab</td><td>5 days</td></tr>
+          <tr><td>C-3 (1L)</td><td>🫀 ORGANS — 150g liver + 150g heart. EAT BY MONDAY</td><td class="red-c">3–4 days MAX</td></tr>
+          <tr><td>C-4 ×2 (1L)</td><td>🍲 BROTH — door shelf. White fat layer = good.</td><td>4–5 days</td></tr>
+          <tr><td>C-5 (1L bowl)</td><td>🫘 SOAK/SPROUT — 80g chickpeas, room temp, rinse 12h</td><td>Daily cycle</td></tr>
+          <tr><td>C-6 ×2 (800ml)</td><td>🥗 GRAB MEALS — pre-assembled. Sunday + Wednesday nights.</td><td class="red-c">24–36 hrs</td></tr>
+          <tr><td>C-7 (300ml glass)</td><td>🧂 SPICE JAR — master blend, 5-week supply</td><td>5 weeks</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Dhaka Heat — Non-Negotiable Safety Rule</div><p>Bacterial doubling time in cooked protein at 30–38°C: ~20 minutes. Move everything into fridge <strong>within 20 minutes of cooking completion.</strong> Always. No exceptions.</p></div>
+    </div>
+  </div>
+
+  <!-- 02 Proteins -->
+  <div class="acc-item" id="acc-02">
+    <div class="acc-hd" onclick="toggleAcc('02')"><div class="acc-num">02</div><div class="acc-title">The Complete Protein Stack</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="guide-h3">Protein Efficiency — Cost Per 30g</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Food</th><th>Protein/100g</th><th>Cost/30g protein</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td>Soya Chunks (dry)</td><td class="green">52g</td><td class="green">~৳10</td><td><span class="bdg bt">Broke-week anchor</span></td></tr>
+          <tr><td>Masoor Dal (dry)</td><td>26g</td><td class="green">~৳12</td><td><span class="bdg bt">Wed Dal Bomb</span></td></tr>
+          <tr><td>Chickpeas (dry)</td><td>19g</td><td>~৳16</td><td><span class="bdg ba">Daily Meal 1 base</span></td></tr>
+          <tr><td>Farm Eggs (chicken)</td><td>7g/egg</td><td>~৳19</td><td><span class="bdg bg">Non-negotiable daily</span></td></tr>
+          <tr><td>Peanuts (raw)</td><td>26g</td><td>~৳20</td><td><span class="bdg ba">Craving killer</span></td></tr>
+          <tr><td>Tilapia / Pangash</td><td>20g</td><td>~৳27</td><td><span class="bdg bt">Tue+Thu Omega-3</span></td></tr>
+          <tr><td>Chicken Breast</td><td>31g</td><td>~৳28</td><td><span class="bdg bg">Mon–Thu primary</span></td></tr>
+          <tr><td>Duck Eggs</td><td>9g/egg</td><td>~৳30</td><td><span class="bdg bg">Daily Omega-3+choline</span></td></tr>
+          <tr><td>Beef Topside</td><td>29–31g</td><td>~৳38</td><td><span class="bdg ba">Fri–Mon + creatine</span></td></tr>
+        </tbody>
+      </table></div>
+      <div class="guide-h3">Key Protein Notes</div>
+      <div class="callout g"><div class="callout-lbl">Duck Eggs — Your Priority Egg</div><p>30% more protein than chicken egg. 3× Vitamin D. Highest DHA of any egg. Find at Karwan Bazar poultry: <strong>"হাঁসের ডিম আছে?"</strong> — buy whenever available. 4/day target.</p></div>
+      <div class="callout" style="margin-top:8px;"><div class="callout-lbl">Beef — The Micronutrient Profile</div><p>Best food source of natural creatine (0.35g/100g). Zinc for testosterone (deficiency = 74% T drop). B12, iron. Ask: <strong>"টপসাইড বা সিলভারসাইড লিন কাট — চর্বি কম"</strong></p></div>
+      <div class="callout" style="margin-top:8px;"><div class="callout-lbl">Chickpeas — The Daily Base</div><p>GI of 28 = no blood sugar spike. Sprouting multiplies bioavailability — Vitamin C appears from zero, anti-nutrients dissolve. <strong>Nightly ritual: 80g dry in C-5 + water = 30 seconds work = 20% of daily nutrition.</strong></p></div>
+    </div>
+  </div>
+
+  <!-- 03 Organs -->
+  <div class="acc-item" id="acc-03">
+    <div class="acc-hd" onclick="toggleAcc('03')"><div class="acc-num">03</div><div class="acc-title">Organ Meat Protocol</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout g"><div class="callout-lbl">Friday Order — Copy This</div><p>"ভাই, টপসাইড লিন বিফ ৪০০গ্রাম, কলিজা ১৫০গ্রাম, হার্ট ১৫০গ্রাম, নলার হাড্ডি ৩০০গ্রাম লাগবে।"</p></div>
+      <div class="tbl-wrap" style="margin-top:12px;"><table class="tbl">
+        <thead><tr><th>Organ</th><th>Key Nutrients</th><th>Prep</th><th>Limit</th></tr></thead>
+        <tbody>
+          <tr><td>Beef Liver<br>গরুর কলিজা</td><td>B12: 2,671% DV · Vit A: 634% DV · Iron: 36% DV · Copper: 1,620% DV</td><td>Soak in cold salt water 20 min → boil 10 min with ginger + garlic</td><td class="red-c">⛔ MAX 150g/WEEK</td></tr>
+          <tr><td>Beef Heart<br>গরুর হার্ট</td><td>CoQ10 × 10 vs muscle · B12 · Iron · Zinc · 28g protein/100g</td><td>Slice 2cm cubes → boil 20 min with garlic + ginger. No soak needed.</td><td class="green">✓ No limit</td></tr>
+          <tr><td>Marrow Bones<br>নলার হাড্ডি</td><td>Glycine (collagen) · Proline (skin) · CLA (fat-burning fat)</td><td>Boil 30 min → scoop marrow → strain liquid = bone broth</td><td class="green">✓ Unlimited</td></tr>
+          <tr><td>Chicken Gizzard<br>মুরগির গিলা</td><td>18g protein/100g · B12 · Iron · Zinc</td><td>Boil 20–25 min with spices. Available at any chicken stall.</td><td class="green">✓ No limit</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Liver Hard Limit — Why It Exists</div><p>150g beef liver = ~9,500 mcg preformed Vit A. Tolerable upper intake = 3,000 mcg/day. <strong>Once per week. Measured. Done.</strong> Eating daily causes hypervitaminosis A — bone pain, nausea, hair loss.</p></div>
+    </div>
+  </div>
+
+  <!-- 04 Carbs + Fats -->
+  <div class="acc-item" id="acc-04">
+    <div class="acc-hd" onclick="toggleAcc('04')"><div class="acc-num">04</div><div class="acc-title">Smart Carbs + Good Fats</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="guide-h3">Replace Rice With These</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Food</th><th>GI</th><th>Why Better</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Chickpeas (soaked)</td><td class="green">28 ← VERY LOW</td><td>Protein+fiber+slow carb. Hours of satiety.</td><td>৳8–9/100g dry</td></tr>
+          <tr><td>Sweet Potato</td><td class="green">44 ← LOW</td><td>Vitamin A, potassium. Boils in same pot.</td><td>৳20–40/kg</td></tr>
+          <tr><td>Mung Bean Sprouts</td><td class="green">25 ← VERY LOW</td><td>Zero cooking. Vitamin C doubles after sprouting.</td><td>৳8–10/100g dry</td></tr>
+          <tr><td>Banana (ripe)</td><td>51</td><td>Fast carb for gym. Potassium. B6 (dopamine).</td><td>৳6–10 each</td></tr>
+          <tr><td>Dates (khejur)</td><td>42</td><td>Iron, potassium. Natural sweetness + fiber.</td><td>৳40–80/200g</td></tr>
+          <tr><td>Regular Potato</td><td class="red-c">78 ← HIGH</td><td>Emergency only. Boil whole to lower GI.</td><td>৳20–30/kg</td></tr>
+        </tbody>
+      </table></div>
+      <div class="guide-h3">Good Fats — Daily Sources</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Fat Source</th><th>Key Benefit</th><th>Daily Amount</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Duck Egg Yolk</td><td>DHA, Vit D, choline, Vit K2</td><td>4 full yolks</td><td>Eat whole. Always.</td></tr>
+          <tr><td>Mustard Oil (সরিষার তেল)</td><td>Omega-3 ALA, oleic acid</td><td>½ tsp × 2 meals</td><td>Cold drizzle AFTER cooking. Never heat it.</td></tr>
+          <tr><td>Peanut fat</td><td>Oleic acid, resveratrol, niacin</td><td>40g peanuts</td><td>Dry roast weekly, eat from desk.</td></tr>
+          <tr><td>Almonds</td><td>Vitamin E, magnesium, oleic acid</td><td>20g</td><td>Raw, after Meal 2.</td></tr>
+          <tr><td>Bone Broth fat</td><td>CLA, Vit A, D, K fat-soluble</td><td>1 cup daily</td><td>Reheat C-4 before sleep.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">The Real Culprit — Oxidised Oil</div><p>Reused cooking oil at Dhaka restaurants produces aldehydes, trans fats, oxidised lipids that damage arterial walls. <strong>Your system uses zero cooking oil.</strong> Mustard oil is a cold finishing drizzle only.</p></div>
+    </div>
+  </div>
+
+  <!-- 05 Superfoods -->
+  <div class="acc-item" id="acc-05">
+    <div class="acc-hd" onclick="toggleAcc('05')"><div class="acc-num">05</div><div class="acc-title">Bangladesh's Hidden Superfoods</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Food</th><th>Bengali</th><th>The Science</th><th>Dose</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Kalonji (Black Seeds)</td><td>কালোজিরা</td><td>Thymoquinone inhibits NF-κB (master inflammation switch). Repairs gut flora after takeout damage.</td><td>1 tsp/day</td><td>In warm milk daily</td></tr>
+          <tr><td>Turmeric + Black Pepper</td><td>হলুদ + গোলমরিচ</td><td>Curcumin inhibits COX-2. Black pepper's piperine increases curcumin absorption by <strong>2,000%</strong>. Always use together.</td><td>½ tsp + pinch per cook</td><td>In master spice blend. Non-negotiable.</td></tr>
+          <tr><td>Garlic (crushed raw)</td><td>রসুন</td><td>Crush triggers allicin conversion. Wait 5 min after crushing for full conversion.</td><td>3–4 cloves per cook</td><td>Crush → wait 5 min → add. Slice 1 raw clove on assembled meal.</td></tr>
+          <tr><td>Moringa (Sojina)</td><td>সজিনা পাতা</td><td>7× Vit C of oranges, 17× calcium of milk, 25× iron of spinach. 1,000+ peer-reviewed studies.</td><td>Fresh handful or 1 tsp powder</td><td>Fresh leaves in broth last 2 min. Often FREE from neighbourhood trees.</td></tr>
+          <tr><td>Lemon (every meal)</td><td>লেবু</td><td>Vit C converts non-heme iron from ferric → ferrous (only absorbable form). Triples iron absorption from chickpeas.</td><td>½ lemon per meal</td><td>Squeeze AFTER serving. Never during cooking.</td></tr>
+          <tr><td>Pui / Lal Shak</td><td>পুঁই শাক / লাল শাক</td><td>Lal shak iron ≈ lean red meat. With lemon, plant iron absorption triples.</td><td>1 bunch per cook session</td><td>Drop in hot broth last 3 min. Wilts immediately.</td></tr>
+          <tr><td>Bitter Gourd (Karela)</td><td>করলা</td><td>Activates AMPK — same pathway as metformin. Multiple RCTs confirm blood glucose reduction.</td><td>50–80g, 2–3×/week</td><td>Boil 10 min in salted water → add to dal. If family diabetes history: essential.</td></tr>
+          <tr><td>Guava (seasonal)</td><td>পেয়ারা</td><td>4× Vit C of oranges by weight. Pink flesh = lycopene.</td><td>1–2/day in season</td><td>Eat raw August–November. Replaces lemon as primary Vit C.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- 06 Cook Protocol -->
+  <div class="acc-item" id="acc-06">
+    <div class="acc-hd" onclick="toggleAcc('06')"><div class="acc-num">06</div><div class="acc-title">Cook Protocol Reference</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout t"><div class="callout-lbl">Use the COOK tab for interactive step-by-step timers</div><p>This section has the reference notes. The Cook tab has the live timer experience.</p></div>
+      <div class="guide-h3">Session A — Sunday (Chicken)</div>
+      <div class="guide-p"><strong>8 min active · 35 min total · Mon–Thu supply</strong></div>
+      <ul class="guide-list">
+        <li>T+0: Spice water + 4 crushed garlic (wait 5 min!) + kalonji + salt + pepper</li>
+        <li>T+2: Egg-marinate: 2 eggs + ½ tsp blend + mustard oil + chili → coat chicken</li>
+        <li>T+8: Load chicken + 10–12 eggs → passive 12 min</li>
+        <li>T+21: Remove eggs → cold water → passive 15 min</li>
+        <li>T+37: Shred chicken → C-1. Shak in broth 2 min. Strain broth → C-4. Eggs → C-2. FRIDGE within 20 min.</li>
+      </ul>
+      <div class="guide-h3">Session B — Friday (Beef)</div>
+      <div class="guide-p"><strong>10 min active · 30 min total · Fri–Mon supply</strong></div>
+      <ul class="guide-list">
+        <li>On delivery: Liver in cold salt water soak 20 min. Heart: slice, no soak.</li>
+        <li>T+0: Richer spice water + ginger (mandatory) + garlic + kalonji + marrow bones</li>
+        <li>T+2: Egg-marinate beef: 1 egg + blend + ginger powder + mustard oil</li>
+        <li>T+8: Beef in first → 8 min passive</li>
+        <li>T+17: Add organs + eggs → 12 min passive</li>
+        <li>T+30: Beef → C-1. Organs → C-3. Eggs → C-2. Broth → C-4. FRIDGE 20 min.</li>
+      </ul>
+      <div class="guide-h3">Dal Bomb — Optional Wednesday</div>
+      <ul class="guide-list">
+        <li>100g masoor dal + 400ml water + spices + 3 garlic. Boil 18 min.</li>
+        <li>Optional: +50g soya chunks = 26g extra protein</li>
+        <li>Egg Ribbon: Beat 2 eggs. LOW heat. Pour in slow stream, stir = silky ribbons</li>
+        <li>Finish: ½ lemon + ½ tsp mustard oil. 28g base protein / 50g with soya. Cost: ৳25–40.</li>
+      </ul>
+      <div class="callout p"><div class="callout-lbl">Why It Doesn't Taste Like Diet Food</div><p>Umami (meat proteins + garlic) + Acid (lemon, squeezed after) + Fat finish (mustard oil drizzle) + Heat (chili) + Sweet contrast (banana/dates). All five taste dimensions. Same principle that makes chotpoti addictive.</p></div>
+    </div>
+  </div>
+
+  <!-- 07 Storage -->
+  <div class="acc-item" id="acc-07">
+    <div class="acc-hd" onclick="toggleAcc('07')"><div class="acc-num">07</div><div class="acc-title">Storage Rules</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Item</th><th>Container</th><th>Max Life</th><th>Discard When</th></tr></thead>
+        <tbody>
+          <tr><td>Cooked chicken/beef</td><td>C-1 top shelf</td><td>5–6 days</td><td>Slimy surface, sour/ammonia smell, grey colour</td></tr>
+          <tr><td>Boiled eggs (peeled)</td><td>C-2 top shelf</td><td>5 days</td><td>Slippery texture, very strong sulfur. Float test raw: tilts=ok, floats=discard.</td></tr>
+          <tr><td>Organ meats (cooked)</td><td>C-3 middle shelf</td><td class="red-c">3–4 days MAX</td><td>Higher water activity. Eat liver/heart by Monday after Friday cook. Hard rule.</td></tr>
+          <tr><td>Bone broth</td><td>C-4 door</td><td>4–5 days</td><td>Off smell, pink colour change. White fat layer + gelling = correct, not spoilage.</td></tr>
+          <tr><td>Assembled meals</td><td>C-6 middle</td><td class="red-c">24–36 hours</td><td>Mixed protein+chickpea+greens degrades faster than components separately.</td></tr>
+          <tr><td>Soaking chickpeas</td><td>C-5 room temp</td><td>Rinse every 12h</td><td>Foul fermented smell = contaminated. Discard, restart. Rinse twice daily in summer.</td></tr>
+          <tr><td>Raw duck eggs</td><td>Bottom shelf</td><td>3 weeks</td><td>Float test: sinks flat=fresh; sinks angled=1 week (fine); floats=discard.</td></tr>
+          <tr><td>Pui/Lal shak</td><td>Plastic bag, bottom</td><td>2–3 days</td><td>Yellow leaves, slimy stems. Buy small, frequent.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout" style="margin-top:10px;"><div class="callout-lbl">Fat Layer on Cold Broth</div><p>White/yellow fat layer on cold broth = excellent. Contains fat-soluble vitamins A, D, K and CLA. <strong>Do not remove it. Stir it back in when reheating.</strong></p></div>
+    </div>
+  </div>
+
+  <!-- 08 Meals Reference -->
+  <div class="acc-item" id="acc-08">
+    <div class="acc-hd" onclick="toggleAcc('08')"><div class="acc-num">08</div><div class="acc-title">Meals Reference</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout t"><div class="callout-lbl">Use the MEALS tab for interactive assembly</div><p>This section has reference notes on the meal science and daily totals.</p></div>
+      <div class="guide-h3">Daily Totals</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Macro</th><th>Meal 1</th><th>Meal 2</th><th>Total</th></tr></thead>
+        <tbody>
+          <tr><td>Protein</td><td>58g</td><td>97g</td><td class="green">155g ✓</td></tr>
+          <tr><td>Calories</td><td>660</td><td>760</td><td class="green">~1,620</td></tr>
+          <tr><td>Fat</td><td>38g</td><td>34g</td><td>72g</td></tr>
+          <tr><td>Carbs</td><td>70g</td><td>42g</td><td>~115g</td></tr>
+          <tr class="total-row"><td>Daily Cost</td><td>~৳95</td><td>~৳145</td><td>~৳240</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout g" style="margin-top:10px;"><div class="callout-lbl">The Deficit Math</div><p>At 88 kg, maintenance ≈ 2,100–2,300 kcal. Eating 1,620 creates ~500–700 kcal deficit. On gym days, 2 bananas + 3 dates pre-workout (~60g carbs) brings deficit to ~400 kcal. Expected fat loss: <strong>0.5–0.75 kg per week.</strong></p></div>
+    </div>
+  </div>
+
+  <!-- 09 Schedule -->
+  <div class="acc-item" id="acc-09">
+    <div class="acc-hd" onclick="toggleAcc('09')"><div class="acc-num">09</div><div class="acc-title">Weekly Operating Schedule</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Day</th><th>Type</th><th>Key Actions</th></tr></thead>
+        <tbody>
+          <tr style="background:var(--amberll);"><td><strong>SUN</strong></td><td>🍳 Cook + 🛒 Shop</td><td>6–9 AM: Karwan Bazar full list. Night: Session 1 (chicken + eggs + broth). Text vendor for Friday order.</td></tr>
+          <tr><td>MON</td><td>Assembly only</td><td>Chicken Day 1. From C-1, C-2, C-5. 5 min per meal. Refill C-5 tonight.</td></tr>
+          <tr><td>TUE</td><td>🐟 Fish Day</td><td>Buy tilapia 200g fresh. Boil 12 min in spice water. Save broth. +12 min total.</td></tr>
+          <tr><td>WED</td><td>Assembly or Dal</td><td>Assembly OR Dal Bomb (20 min warm option). Check C-1: Day 3 chicken — smell before eating.</td></tr>
+          <tr><td>THU</td><td>Last of batch</td><td>Chicken Day 4. Use up C-1 today. WhatsApp vendor to confirm Friday delivery.</td></tr>
+          <tr style="background:var(--bluel);"><td><strong>FRI</strong></td><td>📦 Delivery + 🍳 Cook</td><td>On delivery: fridge immediately. Evening: Session 2 (beef + organs + broth). Organ day tonight.</td></tr>
+          <tr><td>SAT</td><td>Flex Day</td><td>Beef Day. If going out: eat Meal 1 at home first. Always.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout g" style="margin-top:10px;"><div class="callout-lbl">Weekly Time Math</div><p>Sunday: 80 min. Friday: 30 min. Tuesday: 12 min. Daily assembly: 70 min/week. <strong>Total: ~3.5 hours/week including shopping.</strong><br>Current approach: 14–21 hours/week. <strong>You recover 10–17 hours of mental bandwidth.</strong></p></div>
+    </div>
+  </div>
+
+  <!-- 10 Situations -->
+  <div class="acc-item" id="acc-10">
+    <div class="acc-hd" onclick="toggleAcc('10')"><div class="acc-num">10</div><div class="acc-title">Situational Protocols</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="guide-h4">📝 BCS Exam Week</div>
+      <ul class="guide-list">
+        <li>Pre-cook Sunday: full week cooked BEFORE exam week. Never decide food during exams.</li>
+        <li>2 hours before exam: Meal 1 (chickpeas + banana = steady glucose 3–4 hours, no crash)</li>
+        <li>Exam morning drink: 500ml UHT milk + 2 raw eggs + 3 dates + kalonji. 30g protein. 3 min.</li>
+        <li>Choline protocol: 6 eggs day before + day of exam. Choline acutely enhances memory consolidation.</li>
+      </ul>
+      <div class="guide-h4">💸 Emergency Broke Week</div>
+      <ul class="guide-list">
+        <li>Survival floor ৳80–100/day: 6 eggs (৳70–84) + 100g masoor dal (৳13–18) + 500ml UHT milk (৳55) = 95g protein</li>
+        <li>Priority order: soya chunks → dal → eggs → peanuts → chickpeas. Cut beef, fish, almonds first.</li>
+        <li>Free foods: moringa from neighbourhood tree. Marrow bones from butcher (often free). Jackfruit in season.</li>
+      </ul>
+      <div class="guide-h4">🍽️ KFC / Buffet / Social</div>
+      <ul class="guide-list">
+        <li>EAT MEAL 1 AT HOME FIRST. Arrive fed = intelligent choices. Arrive hungry = no choices. Non-negotiable.</li>
+        <li>At KFC: grilled not fried. Remove batter. Water not cola.</li>
+        <li>At buffets: first plate = all protein. Skip rice, naan, dessert.</li>
+        <li>After a binge: zero guilt, zero skipping. Return at next meal. One binge = 4.8% of your week.</li>
+      </ul>
+      <div class="guide-h4">💪 Gym Day</div>
+      <ul class="guide-list">
+        <li>Pre-workout (60 min before): 2 bananas + 3–5 dates = 50–60g fast carbs. Never train fasted (15–20% performance loss).</li>
+        <li>Post-workout (within 90 min): anabolic window. Eat full Meal 2.</li>
+        <li>Creatine: 5g in post-workout milk. Every day including rest days.</li>
+        <li>Coconut water from street vendor ৳40 = better electrolytes than any sports drink.</li>
+      </ul>
+      <div class="guide-h4">🌙 Late Night Binge Urge</div>
+      <ul class="guide-list">
+        <li>Why it happens: insufficient dinner protein (real hunger), electrolyte depletion, or blood sugar drop.</li>
+        <li>15-minute protocol: 250ml UHT milk + 40g peanuts. Fat+protein triggers satiety in 10–15 min.</li>
+        <li>Friction hack: move delivery apps to page 3 of your phone. 3-second friction is statistically significant.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 11 Health -->
+  <div class="acc-item" id="acc-11">
+    <div class="acc-hd" onclick="toggleAcc('11')"><div class="acc-num">11</div><div class="acc-title">The Full Health Stack</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Goal</th><th>Key Nutrients</th><th>Mechanism</th></tr></thead>
+        <tbody>
+          <tr><td>Memory + BCS</td><td>Choline, DHA, B12, Creatine</td><td>Choline → acetylcholine (memory neurotransmitter). Creatine improves working memory under sleep deprivation by 20–40%.</td></tr>
+          <tr><td>Skin quality</td><td>Collagen precursors, Vit C, Zinc, Vit E</td><td>Vit C converts proline → collagen. Without Vit C, no collagen forms. Broth glycine supports elasticity during weight loss.</td></tr>
+          <tr><td>Focus + energy</td><td>Protein, Tyrosine, Magnesium, low-GI carbs</td><td>Protein → tyrosine → dopamine. Chickpea GI 28 eliminates post-meal brain fog.</td></tr>
+          <tr><td>Testosterone</td><td>Zinc, Vitamin D, adequate fat</td><td>Zinc deficiency = 74% T drop. T synthesised from cholesterol — egg yolks essential. Never ultra-low-fat.</td></tr>
+          <tr><td>Sleep quality</td><td>Glycine, Magnesium</td><td>Glycine from broth lowers core body temp 0.5°C = physiological sleep onset. Mag deepens slow-wave sleep.</td></tr>
+          <tr><td>Heart protection</td><td>Omega-3, Garlic, Turmeric, no oxidised oils</td><td>Restaurant reused oil → oxidised fats → arterial damage. Removing it is the single highest-impact cardiovascular change.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="guide-h4">Free Daily Upgrades — Zero Cost</div>
+      <div class="callout t"><div class="callout-lbl">Morning Light (15–20 min)</div><p>Within 30 min of waking: direct sun on face. Sets circadian clock. Cortisol peaks correctly, melatonin rises on schedule. Fixes sleep timing. Do while checking phone. Free Vitamin D.</p></div>
+      <div class="callout b" style="margin-top:8px;"><div class="callout-lbl">Cold Water Finish (30 sec)</div><p>End every shower 30 sec cold water. Dopamine +250% (sustained hours). Norepinephrine +300%. Brown fat activation. Zero cost.</p></div>
+    </div>
+  </div>
+
+  <!-- 12 Supplements -->
+  <div class="acc-item" id="acc-12">
+    <div class="acc-hd" onclick="toggleAcc('12')"><div class="acc-num">12</div><div class="acc-title">Supplements — Only What Works</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout r"><div class="callout-lbl">The supplement industry is 95% marketing</div><p>Only three compounds have replicated RCT evidence strong enough to justify purchasing.</p></div>
+      <div class="tbl-wrap" style="margin-top:10px;"><table class="tbl">
+        <thead><tr><th>Supplement</th><th>Dose</th><th>Evidence</th><th>Monthly Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Creatine Monohydrate</td><td>5g/day, any time</td><td><span class="bdg bg">TIER 1 — 1,000+ RCTs</span></td><td>৳600–1,200</td></tr>
+          <tr><td>Vitamin D3</td><td>1,000–2,000 IU with fatty meal</td><td><span class="bdg ba">TIER 2 — Strong if deficient</span></td><td>৳200–400</td></tr>
+          <tr><td>Ashwagandha (KSM-66 only)</td><td>300mg/day with food</td><td><span class="bdg ba">TIER 2 — 15+ RCTs</span></td><td>৳400–800</td></tr>
+        </tbody>
+      </table></div>
+      <div class="do-grid">
+        <div class="do-col"><div class="do-head">✓ Worth Buying</div>
+          <div class="dd-item">Creatine monohydrate — always</div>
+          <div class="dd-item">Ashwagandha KSM-66 during exam seasons only</div>
+          <div class="dd-item">Vitamin D3 only if no morning sun</div>
+        </div>
+        <div class="dont-col"><div class="dont-head">✕ Skip These</div>
+          <div class="dd-item">Whey protein — redundant at 155g/day</div>
+          <div class="dd-item">BCAAs — food already has full amino profiles</div>
+          <div class="dd-item">Multivitamins — liver + duck eggs cover better</div>
+          <div class="dd-item">Fat burners — zero evidence, cardiac risk</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13 Shopping -->
+  <div class="acc-item" id="acc-13">
+    <div class="acc-hd" onclick="toggleAcc('13')"><div class="acc-num">13</div><div class="acc-title">Shopping Guide</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout t"><div class="callout-lbl">Use the SHOP tab for interactive checklist</div><p>This section has cost summaries and Bengali phrases.</p></div>
+      <div class="guide-h3">Weekly Cost Summary</div>
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Source</th><th>Weekly Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Karwan Bazar (Sunday)</td><td>~৳900–1,200</td></tr>
+          <tr><td>Friday beef delivery</td><td>~৳420–470</td></tr>
+          <tr><td>UHT milk + misc</td><td>~৳350–420</td></tr>
+          <tr class="total-row"><td>Total per week</td><td>~৳1,670–2,090</td></tr>
+          <tr class="total-row"><td>Daily average</td><td>~৳238–299</td></tr>
+        </tbody>
+      </table></div>
+      <div class="guide-h3">Essential Bengali Phrases</div>
+      <ul class="guide-list">
+        <li>"রান-এর বুক, বনলেস, স্কিন ছাড়া" — Chicken breast, boneless, no skin</li>
+        <li>"তেলাপিয়া মাছ, কাটা করে দেন" — Tilapia, please cut it</li>
+        <li>"হাঁসের ডিম আছে?" — Do you have duck eggs?</li>
+        <li>"দেশি মুরগির ডিম" — Farm chicken eggs</li>
+        <li>"মুরগির কলিজা" — Chicken liver</li>
+        <li>"হাড্ডি দেবেন কি?" — Can you give me some bones? (often free)</li>
+        <li>"পান্তা মূল?" — Last/final price? (bargain phrase)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 14 Roadmap -->
+  <div class="acc-item" id="acc-14">
+    <div class="acc-hd" onclick="toggleAcc('14')"><div class="acc-num">14</div><div class="acc-title">Transformation Roadmap</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Milestone</th><th>Weight</th><th>What Happens</th></tr></thead>
+        <tbody>
+          <tr style="background:var(--amberll);"><td><strong>Week 1 — Now</strong></td><td>88 kg</td><td>Buy equipment. First Karwan Bazar shop. First batch cook. Eat first system meal Monday.</td></tr>
+          <tr><td>Month 1</td><td>85–86 kg</td><td>Food decision fatigue → near zero. Sleep improving (glycine). Face definition begins. Energy stabilises.</td></tr>
+          <tr><td>Month 2</td><td>83–84 kg</td><td>Full autopilot. Clothes fitting differently. Gym performance improving week-on-week.</td></tr>
+          <tr><td>Month 4 · Graduation</td><td>79–82 kg</td><td>Visible physique change. Photos measurably different. System requires zero willpower.</td></tr>
+          <tr style="background:var(--greenl);"><td><strong>Month 7 — Target</strong></td><td class="green">71–74 kg</td><td>Body fat ~13–15%. Transition to maintenance. Brad Pitt Fight Club was 70–73 kg.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="guide-h3">Week 1 — Foundation Checklist</div>
+      <ul class="guide-list">
+        <li>Buy induction cooker (৳1,200–1,800) from Elephant Road</li>
+        <li>Buy 4–5L stainless steel pot + lid (৳400–700)</li>
+        <li>Buy all 6 containers (৳550–800) from New Market basement</li>
+        <li>Mix master spice blend into glass jar (C-7)</li>
+        <li>Sunday: First Karwan Bazar shop</li>
+        <li>Sunday night: Run Cook Session 1</li>
+        <li>Monday: Eat first system meal</li>
+      </ul>
+      <div class="guide-h3">Month 2+ — Autopilot Additions</div>
+      <ul class="guide-list">
+        <li>Add guava August–November, hilsa July–September</li>
+        <li>Try Dal Bomb on Wednesdays for warm variety</li>
+        <li>Month 3: if losing >1 kg/week, add 200 kcal</li>
+        <li>Month 4: assess recomposition vs cutting phase</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 15 Rules -->
+  <div class="acc-item" id="acc-15">
+    <div class="acc-hd" onclick="toggleAcc('15')"><div class="acc-num">15</div><div class="acc-title">The Hard Rules — Not Suggestions</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="do-grid">
+        <div class="do-col">
+          <div class="do-head">✓ Always Do</div>
+          <div class="dd-item">Lemon on every meal, squeezed AFTER serving, never during cooking</div>
+          <div class="dd-item">1 cup bone broth before sleep, every night</div>
+          <div class="dd-item">Nightly chickpea soak. 30 seconds. Every night.</div>
+          <div class="dd-item">Eat Meal 1 before any social event. Always.</div>
+          <div class="dd-item">Add ginger to every beef cook. No exceptions.</div>
+          <div class="dd-item">15–20 min direct morning sun, 5 days/week</div>
+          <div class="dd-item">Eat the ENTIRE egg including yolk. Every time.</div>
+          <div class="dd-item">Order organs every Friday delivery</div>
+          <div class="dd-item">Return to system at very next meal after any deviation</div>
+          <div class="dd-item">Fridge anything cooked within 20 minutes</div>
+        </div>
+        <div class="dont-col">
+          <div class="dont-head">✕ Never Do</div>
+          <div class="dd-item">Eat liver more than 150g per week</div>
+          <div class="dd-item">Leave cooked meat at room temp >2 hours</div>
+          <div class="dd-item">Pour the broth down the drain</div>
+          <div class="dd-item">Add refined sugar to anything</div>
+          <div class="dd-item">Cook IN oil (mustard oil = cold finish drizzle only)</div>
+          <div class="dd-item">Drink soft drinks, packaged juice, energy drinks</div>
+          <div class="dd-item">Eat restaurant food more than once per week</div>
+          <div class="dd-item">Fast more than once per week while cutting</div>
+          <div class="dd-item">Skip eggs on any day (minimum 4)</div>
+          <div class="dd-item">Remove the white fat layer from cold broth</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cheatsheet -->
+  <div class="acc-item" id="acc-cs">
+    <div class="acc-hd" onclick="toggleAcc('cs')"><div class="acc-num">⚡</div><div class="acc-title">Daily Cheatsheet — Print This</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="cheatsheet">
+        <div class="cs-head"><div class="cs-ttl">Every Day — Open, Check Off, Close</div><div class="cs-meta">DHAKA STACK v5</div></div>
+        <div class="cs-grid">
+          <div class="cs-cell"><div class="cs-lbl">Protein Goal</div><div class="cs-val">155g</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Calorie Target</div><div class="cs-val">1,600–1,800</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Daily Spend</div><div class="cs-val">~240৳</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Weight Target</div><div class="cs-val">71–74 kg</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Meal 1 Protein</div><div class="cs-val">58g / 660 kcal</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Meal 2 Protein</div><div class="cs-val">97g / 760 kcal</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Eggs / Day</div><div class="cs-val">4 duck + 2 chk</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Water / Day</div><div class="cs-val">3L salted</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Cook Sessions</div><div class="cs-val">2 × week</div></div>
+          <div class="cs-cell"><div class="cs-lbl">Active Cook Time</div><div class="cs-val">8 min each</div></div>
+        </div>
+      </div>
+      <div class="guide-h3" style="margin-top:16px;">Morning Non-Negotiables</div>
+      <ul class="guide-list">
+        <li>15–20 min sun on skin within 30 min of waking</li>
+        <li>500ml salted water on waking</li>
+        <li>Drain + refill C-5 (chickpea soak)</li>
+      </ul>
+      <div class="guide-h3">Throughout Day</div>
+      <ul class="guide-list">
+        <li>Total 3L salted water</li>
+        <li>1 cup bone broth before sleep</li>
+        <li>Nightly 80g chickpea soak refill</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="height:20px;"></div>
+</div><!-- /guide page -->
+
+</div><!-- /pages -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ALARM -->
+<div class="alarm" id="alarm">
+  <div class="alarm-emoji">⏰</div>
+  <div class="alarm-msg" id="alarmMsg">Timer Done!</div>
+  <div class="alarm-sub" id="alarmSub">Next step ready</div>
+  <button class="alarm-dismiss" onclick="dismissAlarm()">GOT IT</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════
+const $ = id => document.getElementById(id);
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const dayShort = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+function showToast(msg) {
+  const t = $('toast'); t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+function showAlarm(msg, sub) {
+  $('alarmMsg').textContent = msg;
+  $('alarmSub').textContent = sub;
+  $('alarm').classList.add('show');
+  if (navigator.vibrate) navigator.vibrate([300,100,300,100,500]);
+  // Web Notification if allowed
+  if (Notification.permission === 'granted') {
+    new Notification('Dhaka Stack', { body: msg, icon: '' });
+  }
+}
+function dismissAlarm() { $('alarm').classList.remove('show'); }
+
+function ls(key, def='null') {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : JSON.parse(def); }
+  catch(e) { return JSON.parse(def); }
+}
+function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
+
+// ══════════════════════════════════════════════════════
+// HEADER — DAY + DATE
+// ══════════════════════════════════════════════════════
+(function initHeader() {
+  const now = new Date();
+  const d = now.getDay();
+  const dayBadge = $('dayBadge');
+  dayBadge.textContent = dayShort[d];
+  if (d === 0) { dayBadge.className = 'app-day-badge day-cook'; }
+  else if (d === 5) { dayBadge.className = 'app-day-badge day-delivery'; }
+  else { dayBadge.className = 'app-day-badge day-normal'; }
+
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  $('dateLabel').textContent = now.getDate() + ' ' + months[now.getMonth()];
+
+  // Today page
+  $('todayDayName').textContent = days[d];
+  const phases = {
+    0: '🍳 Cook Day — Sunday. Shop 6–9 AM, Session 1 tonight.',
+    1: '🥩 Chicken Day 1 (Mon–Thu). Assembly only.',
+    2: '🐟 Fish Day — Buy tilapia fresh today.',
+    3: '🍲 Chicken Day 3 — assembly or Dal Bomb option.',
+    4: '🥩 Chicken Day 4 — last of batch. Text vendor today.',
+    5: '📦 Delivery Day — Session 2 tonight. Organs go in C-3.',
+    6: '🥩 Beef Day 2 (Fri–Mon). Flex day.'
+  };
+  $('todayPhase').textContent = phases[d];
+
+  const tonightActions = {
+    0: 'Run Cook Session A: chicken + eggs + broth. 8 min active, 35 min total. Soak 80g chickpeas in C-5.',
+    1: 'Refill C-5 with 80g chickpeas. Drink bone broth before sleep. Confirm Tuesday tilapia shop.',
+    2: 'Buy tilapia 200g fresh. Boil 12 min, save broth. Refill C-5. Broth before sleep.',
+    3: 'Optional: Dal Bomb if you want hot food. Refill C-5. Check C-1 chicken (day 3 — smell first).',
+    4: 'WhatsApp vendor: confirm Friday delivery (beef 400g + liver 150g + heart 150g + bones 300g). Refill C-5.',
+    5: 'As soon as delivery arrives: FRIDGE immediately. Run Cook Session B: beef + organs + broth. Eat liver/heart tomorrow — 3 day max.',
+    6: 'Enjoy beef day. If eating out tonight, eat Meal 1 at home first. Refill C-5 soak. Broth before sleep.'
+  };
+  $('tonightText').textContent = tonightActions[d];
+})();
+
+// ══════════════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const ids = ['today','shop','cook','meals','guide'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  $('page-' + id).classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════
+// PROTEIN TRACKER
+// ══════════════════════════════════════════════════════
+const PT_KEY = 'pt_' + new Date().toDateString();
+let ptGrams = ls(PT_KEY, '0');
+
+function renderPt() {
+  $('ptCurrent').textContent = ptGrams;
+  const pct = Math.min(100, Math.round((ptGrams / 155) * 100));
+  $('ptFill').style.width = pct + '%';
+  $('ptFill').style.background = pct >= 100 ? 'linear-gradient(90deg,#1B5E3B,#4CAF7D)' : 'linear-gradient(90deg,var(--green2),var(--green3))';
+}
+function addProtein(g) { ptGrams = Math.round(ptGrams + g); lsSet(PT_KEY, ptGrams); renderPt(); showToast('+' + g + 'g → ' + ptGrams + 'g total'); }
+function resetProtein() { ptGrams = 0; lsSet(PT_KEY, 0); renderPt(); showToast('Reset to 0g'); }
+renderPt();
+
+// ══════════════════════════════════════════════════════
+// DAILY CHECKLIST
+// ══════════════════════════════════════════════════════
+const DAILY_ITEMS = [
+  { id: 'dc1', text: '15–20 min morning sun', sub: 'Within 30 min of waking. Free Vit D + circadian clock set.' },
+  { id: 'dc2', text: '500ml salted water on waking', sub: 'Before food, before coffee.' },
+  { id: 'dc3', text: 'Drain + refill C-5 (chickpea soak)', sub: '30 seconds. Every night. Non-negotiable.' },
+  { id: 'dc4', text: 'Meal 1 assembled', sub: '4 eggs + chickpeas + peanuts + banana + lemon + kalonji milk' },
+  { id: 'dc5', text: 'Lemon squeezed on Meal 1', sub: 'AFTER serving. Never during cooking.' },
+  { id: 'dc6', text: 'Meal 2 assembled', sub: '220–250g meat + 2 eggs + chickpeas + broth' },
+  { id: 'dc7', text: 'Lemon squeezed on Meal 2', sub: 'Plus ½ tsp mustard oil cold drizzle.' },
+  { id: 'dc8', text: '3L salted water consumed', sub: 'Spread throughout day.' },
+  { id: 'dc9', text: '1 cup bone broth before sleep', sub: 'Glycine → lowers core body temp → sleep onset trigger.' },
+  { id: 'dc10', text: 'Nightly chickpea soak (80g in C-5)', sub: 'Tonight\'s soak = tomorrow\'s Meal 1.' },
+];
+
+const DC_KEY = 'dc_' + new Date().toDateString();
+let dcState = ls(DC_KEY, '{}');
+
+function renderDailyChecklist() {
+  const container = $('dailyChecklist');
+  container.innerHTML = DAILY_ITEMS.map(item => `
+    <div class="chk-item ${dcState[item.id] ? 'done' : ''}" onclick="toggleDailyChk('${item.id}')">
+      <div class="chk-box"><span class="chk-mark">✓</span></div>
+      <div>
+        <div class="chk-text">${item.text}</div>
+        <div class="chk-sub">${item.sub}</div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleDailyChk(id) {
+  dcState[id] = !dcState[id];
+  lsSet(DC_KEY, dcState);
+  renderDailyChecklist();
+  const done = Object.values(dcState).filter(Boolean).length;
+  if (done === DAILY_ITEMS.length) showToast('🎉 All done for today!');
+}
+renderDailyChecklist();
+
+// ══════════════════════════════════════════════════════
+// SHOP DATA + RENDER
+// ══════════════════════════════════════════════════════
+const SHOP_GROUPS = [
+  { title: '🥩 Proteins — Butcher + Fish', items: [
+    { id:'s1', name:'Chicken Breast', bn:'"রান-এর বুক, বনলেস, স্কিন ছাড়া"', qty:'700g' },
+    { id:'s2', name:'Tilapia Fish', bn:'"তেলাপিয়া মাছ, কাটা করে দেন" · Buy Tue+Thu FRESH only', qty:'200g × 2' },
+    { id:'s3', name:'Beef Liver (if no vendor)', bn:'"মুরগির কলিজা" · MAX 150g/week', qty:'150g' },
+  ]},
+  { title: '🥚 Eggs', items: [
+    { id:'s4', name:'Farm Chicken Eggs', bn:'"দেশি মুরগির ডিম" · Float test: tilts=ok, floats=discard', qty:'20 pcs' },
+    { id:'s5', name:'Duck Eggs', bn:'"হাঁসের ডিম আছে?" · Buy whenever available. Lasts 3 wks raw.', qty:'14–28 pcs' },
+  ]},
+  { title: '🫘 Dry Goods — Rear Dal Section', items: [
+    { id:'s6', name:'Masoor Dal', bn:'মসুর ডাল · Months room temp sealed', qty:'500g' },
+    { id:'s7', name:'Dried Chickpeas', bn:'শুকনো ছোলা · Months room temp sealed', qty:'500g' },
+    { id:'s8', name:'Mung Beans', bn:'মুগ ডাল · For sprouting only', qty:'300g' },
+    { id:'s9', name:'Raw Peanuts', bn:'কাঁচা চিনাবাদাম · 2 weeks sealed', qty:'250g' },
+    { id:'s10', name:'Almonds', bn:'বাদাম · 1 month sealed', qty:'100g' },
+    { id:'s11', name:'Soya Chunks', bn:'সয়া চাঙ্ক · 52g protein/100g dry. Emergency backup.', qty:'500g' },
+  ]},
+  { title: '🌿 Produce + Fruit', items: [
+    { id:'s12', name:'Pui Shak / Lal Shak', bn:'পুঁই শাক / লাল শাক · 2–3 days fridge', qty:'3 bunches' },
+    { id:'s13', name:'Bananas', bn:'কলা · 3–5 days room temp', qty:'14 pcs (1 bunch)' },
+    { id:'s14', name:'Dates', bn:'খেজুর · Months room temp', qty:'200g' },
+    { id:'s15', name:'Lemons', bn:'লেবু · 1 per meal — NON-NEGOTIABLE', qty:'14 pcs' },
+    { id:'s16', name:'Garlic', bn:'রসুন · Crush, wait 5 min, then cook', qty:'2 heads' },
+    { id:'s17', name:'Fresh Ginger', bn:'আদা · Mandatory for beef — removes gamey notes', qty:'100g' },
+    { id:'s18', name:'Sweet Potato', bn:'মিষ্টি আলু · GI 44. Replaces rice.', qty:'300g' },
+  ]},
+  { title: '🥛 Dairy + Pantry', items: [
+    { id:'s19', name:'UHT Milk 500ml packs', bn:'Aarong / MilkVita · 6 months unopened', qty:'7 packs' },
+    { id:'s20', name:'Kalonji (Black Seeds)', bn:'কালোজিরা · In milk daily + cook water', qty:'200g' },
+    { id:'s21', name:'Mustard Oil', bn:'সরিষার তেল · Cold drizzle ONLY. NEVER cook in it.', qty:'500ml' },
+  ]},
+  { title: '🧂 Spice Blend — Monthly Mix', items: [
+    { id:'s22', name:'Cumin + Coriander Powder', bn:'জিরা গুঁড়া + ধনে গুঁড়া · 4 tsp + 3 tsp in blend', qty:'100g each' },
+    { id:'s23', name:'Turmeric + Chili Powder', bn:'হলুদ + মরিচ গুঁড়া · 3 tsp + 1.5 tsp in blend', qty:'100g each' },
+    { id:'s24', name:'Garlic + Ginger Powder', bn:'রসুন গুঁড়া + আদা গুঁড়া · 3 tsp + 1.5 tsp', qty:'100g each' },
+    { id:'s25', name:'Black Pepper (whole + powder)', bn:'গোল মরিচ · 2 tsp · Always with turmeric (2,000% absorption)', qty:'50g' },
+  ]},
+];
+
+const TOTAL_SHOP = SHOP_GROUPS.reduce((a, g) => a + g.items.length, 0);
+let shopState = ls('shopState2025', '{}');
+
+function renderShop() {
+  let html = '';
+  SHOP_GROUPS.forEach(g => {
+    html += `<div class="shop-group-hd">${g.title}</div>`;
+    g.items.forEach(item => {
+      const done = shopState[item.id];
+      html += `<div class="shop-item ${done ? 'done' : ''}" onclick="toggleShop('${item.id}')">
+        <div class="shop-chk"><span class="shop-chk-mk">✓</span></div>
+        <div class="shop-body">
+          <div class="shop-name">${item.name}</div>
+          <div class="shop-bn">${item.bn}</div>
+        </div>
+        <span class="shop-qty">${item.qty}</span>
+      </div>`;
+    });
+  });
+  $('shopListHTML').innerHTML = html;
+  updateShopProgress();
+}
+
+function toggleShop(id) {
+  shopState[id] = !shopState[id];
+  lsSet('shopState2025', shopState);
+  renderShop();
+  if (shopState[id]) showToast('✓ Got it!');
+}
+function resetShop() {
+  if (!confirm('Clear all shopping checks?')) return;
+  shopState = {};
+  lsSet('shopState2025', shopState);
+  renderShop();
+}
+function updateShopProgress() {
+  const done = Object.values(shopState).filter(Boolean).length;
+  const pct = Math.round((done / TOTAL_SHOP) * 100);
+  $('shopProg').style.width = pct + '%';
+  $('shopProgLabel').textContent = done + ' of ' + TOTAL_SHOP + ' items (' + pct + '%)';
+}
+
+function copyVendorMsg() {
+  const msg = 'ভাই, শুক্রবার টপসাইড লিন বিফ ৪০০গ্রাম, কলিজা ১৫০গ্রাম, হার্ট ১৫০গ্রাম, নলার হাড্ডি ৩০০গ্রাম দরকার। আগামীকাল ডেলিভারি হবে কি?';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(msg).then(() => showToast('Vendor message copied! 📋'));
+  } else {
+    showToast('Long-press and copy the message above');
+  }
+}
+
+renderShop();
+
+// ══════════════════════════════════════════════════════
+// COOK SESSIONS DATA
+// ══════════════════════════════════════════════════════
+const SESSIONS = {
+  A: {
+    steps: [
+      { title:'Build Spice Water', badge:'active', badgeTxt:'2 MIN ACTIVE',
+        desc:'Fill pot ¾ with water. Add: 2 tsp master blend + 4 garlic cloves (crush, wait 5 min, then add) + 1 tsp kalonji + 1 tsp salt + ½ tsp black pepper. Turn induction to HIGH.',
+        note:'Garlic: crush first, wait 5 minutes, then add. This activates allicin. Do not skip the wait.', noteType:'', timer: null },
+      { title:'Egg-Marinate Chicken', badge:'active', badgeTxt:'3 MIN ACTIVE',
+        desc:'In a bowl: beat 2 eggs + ½ tsp master blend + ½ tsp mustard oil + pinch chili. Coat 500g chicken breast pieces completely. Rest 5 minutes.',
+        note:'The egg coating seals moisture the instant chicken hits boiling water. This is what stops it tasting like hospital food. Never skip the marinate.', noteType:'', timer:null },
+      { title:'Load the Pot', badge:'active', badgeTxt:'1 MIN ACTIVE',
+        desc:'Add marinated chicken to boiling water. Lower 10–12 eggs gently with a spoon (duck + chicken mix). Add marrow bones if from Friday delivery. Set timer.',
+        note:null, timer:null },
+      { title:'PASSIVE — 12 Minutes', badge:'passive', badgeTxt:'12 MIN PASSIVE',
+        desc:'Walk away completely. Study, shower, anything. Do not stir. Do not peek.',
+        note:null, timer: 12*60 },
+      { title:'Remove Eggs', badge:'active', badgeTxt:'1 MIN ACTIVE',
+        desc:'Remove eggs with a spoon into cold water. This stops cooking and prevents the grey yolk ring. Set 15-minute timer for chicken.',
+        note:null, timer:null },
+      { title:'PASSIVE — 15 Minutes', badge:'passive', badgeTxt:'15 MIN PASSIVE',
+        desc:'Passive again. Chicken finishes. Leave it.',
+        note:null, timer: 15*60 },
+      { title:'Extract + Store', badge:'fin', badgeTxt:'4 MIN · DONE',
+        desc:'Chicken → shred/slice → C-1. Drop 1 bunch pui shak into hot broth, stir 2 min. Strain ALL broth → C-4 bottles. Peel eggs → C-2. Into fridge within 20 min.',
+        note:'Never pour broth away. The shak wilts in 2 minutes and goes into the broth bottles automatically. Fridge within 20 min — Dhaka heat.', noteType:'g',
+        alarmMsg:'✅ Session A Complete! Mon–Thu covered.', alarmSub:'Fridge everything within 20 min. Peel eggs anytime.', timer:null }
+    ]
+  },
+  B: {
+    steps: [
+      { title:'Liver Soak — Start Now', badge:'active', badgeTxt:'2 MIN ACTIVE',
+        desc:'Slice liver into 2cm pieces. Submerge in cold water + 1 tsp salt. Set 20-minute timer. Heart: slice into 2cm cubes. No soak needed.',
+        note:'The soak removes the metallic edge. Without it: medicinal taste. With it: rich beef flavour. Do not skip.', noteType:'', timer: 20*60 },
+      { title:'Build Beef Spice Water', badge:'active', badgeTxt:'2 MIN ACTIVE',
+        desc:'Fill pot ¾. Add: 2 tsp master blend + 5 crushed garlic cloves + 1 thumb fresh ginger sliced (MANDATORY) + 1 tsp kalonji + 1 tsp salt + marrow bones. HIGH heat.',
+        note:'Ginger is non-negotiable for beef — it neutralises gamey notes. Never skip it.', noteType:'', timer:null },
+      { title:'Egg-Marinate Beef', badge:'active', badgeTxt:'2 MIN ACTIVE',
+        desc:'Beat 1 egg + ½ tsp master blend + ½ tsp ginger powder + ½ tsp mustard oil + pinch chili. Coat beef pieces. Rest 5 min.',
+        note:null, timer:null },
+      { title:'Beef Goes In First', badge:'active', badgeTxt:'1 MIN + 8 MIN PASSIVE',
+        desc:'Beef needs 20 min total. Add beef to boiling spice water. Start 8-minute timer.',
+        note:'Beef goes in alone first. Organs and eggs are added 8 minutes later.', noteType:'', timer: 8*60 },
+      { title:'Add Organs + Eggs', badge:'active', badgeTxt:'1 MIN ACTIVE',
+        desc:'Add drained liver + heart cubes to pot. Lower 8–10 eggs gently. Set timer 12 min.',
+        note:'Liver and heart only need 12 min. Beef has had 8 min head start — it needs 20 total.', noteType:'', timer: 12*60 },
+      { title:'Extract + Store', badge:'fin', badgeTxt:'3 MIN · DONE',
+        desc:'Beef → C-1. Organs (150g liver + 150g heart) → C-3 (⚠️ eat by Monday — 3 day max). Eggs → cold water → peel → C-2. ALL broth → C-4 bottles. Into fridge within 20 min.',
+        note:'⚠️ Organs into fridge immediately. C-3 consumed by Monday. 3-day hard limit.', noteType:'r',
+        alarmMsg:'✅ Session B Complete! Fri–Mon covered.', alarmSub:'⚠️ Eat organs from C-3 by Monday. Fridge everything within 20 min.', timer:null }
+    ]
+  }
+};
+
+let currentSession = 'A';
+let cookState = {};
+let timers = {};
+
+function selectSession(s) {
+  currentSession = s;
+  $('sess-btn-A').classList.toggle('active', s==='A');
+  $('sess-btn-B').classList.toggle('active', s==='B');
+  cookState = ls('cook_' + s, '{}');
+  renderCookSteps();
+}
+
+function renderCookSteps() {
+  const sess = SESSIONS[currentSession];
+  cookState = ls('cook_' + currentSession, '{}');
+  const container = $('cookStepContainer');
+  let html = '';
+  sess.steps.forEach((step, i) => {
+    const isDone = cookState[i] === 'done';
+    const isOpen = cookState[i] === 'open';
+    const cls = isDone ? 'done-s' : (isOpen ? 'active-s open' : '');
+    const bdgCls = step.badge === 'passive' ? 'bdg-pas' : step.badge === 'fin' ? 'bdg-fin' : 'bdg-act';
+    const noteHtml = step.note ? `<div class="step-note ${step.noteType==='g'?'g':step.noteType==='r'?'r':''}">${step.note}</div>` : '';
+    const timerHtml = step.timer ? `
+      <div class="timer-box">
+        <div class="timer-lbl">COUNTDOWN TIMER</div>
+        <div class="timer-disp" id="td_${currentSession}_${i}">${fmt(step.timer)}</div>
+        <div class="timer-prog-wrap"><div class="timer-prog-fill" id="tp_${currentSession}_${i}" style="width:100%"></div></div>
+        <div class="timer-ctrls">
+          <button class="t-btn t-start" onclick="startTimer(${i},${step.timer})">START</button>
+          <button class="t-btn t-reset" onclick="resetTimer(${i},${step.timer})">RESET</button>
+        </div>
+      </div>` : '';
+    html += `<div class="cook-step ${cls}" id="cs_${i}">
+      <div class="step-hd" onclick="toggleStep(${i})">
+        <div class="step-num">${isDone ? '✓' : i+1}</div>
+        <div class="step-ttl">${step.title}</div>
+        <span class="step-bdg ${bdgCls}">${step.badgeText || step.badgeTxt}</span>
+      </div>
+      <div class="step-body">
+        <div class="step-desc">${step.desc}</div>
+        ${noteHtml}
+        ${timerHtml}
+        <div class="step-actions">
+          <button class="step-act-btn ${isDone ? 'btn-undo' : 'btn-done'}" onclick="markStep(${i},${!isDone})">${isDone ? 'UNDO' : '✓ MARK DONE'}</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+  updateCookProg();
+}
+
+function toggleStep(i) {
+  if (cookState[i] === 'done') return;
+  cookState[i] = cookState[i] === 'open' ? undefined : 'open';
+  if (!cookState[i]) delete cookState[i];
+  lsSet('cook_' + currentSession, cookState);
+  renderCookSteps();
+}
+function markStep(i, done) {
+  cookState[i] = done ? 'done' : 'open';
+  lsSet('cook_' + currentSession, cookState);
+  if (done) {
+    showToast('Step ' + (i+1) + ' done ✓');
+    const step = SESSIONS[currentSession].steps[i];
+    if (i === SESSIONS[currentSession].steps.length - 1 && step.alarmMsg) {
+      setTimeout(() => showAlarm(step.alarmMsg, step.alarmSub), 400);
+    }
+  }
+  renderCookSteps();
+}
+function updateCookProg() {
+  const total = SESSIONS[currentSession].steps.length;
+  const done = SESSIONS[currentSession].steps.filter((_,i) => cookState[i]==='done').length;
+  $('cookProgText').textContent = done + ' of ' + total + ' steps complete';
+}
+function resetCook() {
+  if (!confirm('Reset all steps for this session?')) return;
+  Object.keys(timers).forEach(k => { clearInterval(timers[k].interval); });
+  timers = {};
+  cookState = {};
+  lsSet('cook_A', {}); lsSet('cook_B', {});
+  renderCookSteps();
+}
+
+function fmt(s) { return (s < 0 ? '00:00' : (Math.floor(s/60)<10?'0':'')+Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60); }
+
+function startTimer(idx, total) {
+  const key = currentSession + '_' + idx;
+  if (timers[key] && timers[key].running) return;
+  if (!timers[key]) timers[key] = { rem: total, total, running: false };
+  timers[key].running = true;
+  timers[key].interval = setInterval(() => {
+    timers[key].rem--;
+    const rem = timers[key].rem;
+    const disp = $('td_' + currentSession + '_' + idx);
+    const prog = $('tp_' + currentSession + '_' + idx);
+    if (disp) { disp.textContent = fmt(rem); if (rem <= 30) disp.classList.add('urgent'); }
+    if (prog) prog.style.width = (Math.max(0,rem/total)*100)+'%';
+    if (rem <= 0) {
+      clearInterval(timers[key].interval); timers[key].running = false;
+      if (disp) { disp.textContent = 'DONE'; disp.className = 'timer-disp done-t'; }
+      showAlarm('⏱ Timer Done!', 'Step ' + (idx+1) + ': ' + SESSIONS[currentSession].steps[idx].title);
+    }
+  }, 1000);
+  showToast('Timer started');
+}
+function resetTimer(idx, total) {
+  const key = currentSession + '_' + idx;
+  if (timers[key]) { clearInterval(timers[key].interval); delete timers[key]; }
+  const disp = $('td_' + currentSession + '_' + idx);
+  const prog = $('tp_' + currentSession + '_' + idx);
+  if (disp) { disp.textContent = fmt(total); disp.className = 'timer-disp'; }
+  if (prog) prog.style.width = '100%';
+}
+
+// Init cook
+cookState = ls('cook_A', '{}');
+renderCookSteps();
+
+// ══════════════════════════════════════════════════════
+// MEALS DATA
+// ══════════════════════════════════════════════════════
+const MEALS = {
+  1: {
+    macros: [{val:'58g',key:'PROTEIN'},{val:'660',key:'CALORIES'},{val:'38g',key:'FAT'},{val:'70g',key:'CARBS'},{val:'~95৳',key:'COST'}],
+    tip: { hd:'WHY THIS TASTES GOOD', body:'Chickpeas + lemon + mustard oil + chili = classic Bengali chaat formula. Sweet (banana, dates) + Sour (lemon) + Spicy (chili) + Fatty (peanuts, oil) + Umami (eggs, chickpeas). All five taste dimensions at once. Same principle that makes chotpoti addictive.' },
+    ingredients: [
+      {name:'Soaked chickpeas',from:'C-5 on desk',amt:'100g'},
+      {name:'Duck eggs, boiled',from:'C-2 top shelf',amt:'2 whole'},
+      {name:'Chicken eggs, boiled',from:'C-2 top shelf',amt:'2 whole'},
+      {name:'Raw peanuts',from:'Desk dry store',amt:'40g'},
+      {name:'Ripe banana',from:'Room temp',amt:'1 medium'},
+      {name:'Dates (chopped)',from:'Room temp',amt:'3 pieces'},
+      {name:'UHT milk',from:'Room temp pack',amt:'250ml'},
+      {name:'Kalonji (black seeds)',from:'C-7 spice jar',amt:'1 tsp'},
+      {name:'Lemon juice',from:'Fridge bottom',amt:'½ lemon AFTER'},
+      {name:'Mustard oil (cold)',from:'Pantry',amt:'½ tsp COLD'},
+    ],
+    assembly: [
+      {text:'Open C-5 → 100g chickpeas into bowl. Drain soak water.',sub:'Tails visible after 36h = sprouted. Even better. White tails are perfect.'},
+      {text:'Open C-2 → 2 duck + 2 chicken eggs. Slice over chickpeas or eat whole.',sub:'Never remove the yolk. The yolk = choline + DHA + Vit D. The white is just protein.'},
+      {text:'Add 40g peanuts + 3 chopped dates + 1 banana alongside.',sub:''},
+      {text:'Squeeze ½ lemon OVER everything. Add salt + chili flakes.',sub:'Lemon AFTER assembly — heat kills Vit C. This step triples iron absorption from chickpeas.'},
+      {text:'Drizzle ½ tsp mustard oil cold over chickpeas. Never heat it.',sub:'Heating mustard oil destroys Omega-3 ALA and creates harmful oxidation products.'},
+      {text:'Pour 250ml UHT milk in cup. Stir in 1 tsp kalonji. Drink alongside.',sub:'Kalonji in warm milk = anti-inflammatory, gut repair, blood glucose control.'},
+    ]
+  },
+  2: {
+    macros: [{val:'97g',key:'PROTEIN'},{val:'760',key:'CALORIES'},{val:'34g',key:'FAT'},{val:'42g',key:'CARBS'},{val:'~145৳',key:'COST'}],
+    tip: { hd:'CHICKEN vs BEEF DAY', body:'Chicken (Mon–Thu): lemon + pui shak + chili = clean, bright. Beef (Fri–Mon): richer — extra ginger + more mustard oil drizzle. Organ day (Fri or Sat): replace 100g meat with 50g liver + 75g heart from C-3. Extra lemon essential on organ day.' },
+    ingredients: [
+      {name:'Batch chicken or beef',from:'C-1 top shelf',amt:'220–250g'},
+      {name:'Duck egg, boiled',from:'C-2 top shelf',amt:'1 whole'},
+      {name:'Chicken egg, boiled',from:'C-2 top shelf',amt:'1 whole'},
+      {name:'Soaked chickpeas',from:'C-5 on desk',amt:'60g'},
+      {name:'Bone broth',from:'C-4 door shelf',amt:'250ml (warm)'},
+      {name:'Pui shak (in broth)',from:'C-4 bottle',amt:'handful'},
+      {name:'UHT milk',from:'Room temp pack',amt:'250ml'},
+      {name:'Almonds',from:'Desk dry store',amt:'20g (after)'},
+      {name:'Lemon juice',from:'Fridge bottom',amt:'½ lemon AFTER'},
+      {name:'Mustard oil (cold)',from:'Pantry',amt:'½ tsp COLD'},
+    ],
+    assembly: [
+      {text:'Open C-1 → 220–250g meat. Shred beef with fork (chicken already shredded).',sub:'Beef = Fri–Mon. Chicken = Mon–Thu. Organ day: swap 100g meat for 50g liver + 75g heart.'},
+      {text:'Open C-2 → 1 duck + 1 chicken egg. Slice over meat.',sub:''},
+      {text:'Open C-5 → 60g chickpeas alongside. Add pui shak from C-4 bottle.',sub:''},
+      {text:'Heat 250ml broth 2–3 min in pot (or microwave 90 sec). Pour over or alongside.',sub:'White fat layer in cold broth = correct, not spoilage. Stir it in — Vit A, D, K + CLA.'},
+      {text:'Squeeze ½ lemon over everything. Drizzle ½ tsp cold mustard oil.',sub:'Lemon AFTER serving. Oil cold. Never heat either.'},
+      {text:'Drink 250ml UHT milk. Eat 20g almonds after as dessert.',sub:'Almonds eaten after protein = better fat absorption timing. Vitamin E + magnesium.'},
+    ]
+  }
+};
+
+let currentMeal = 1;
+let mealState = {};
+
+function selectMeal(m) {
+  currentMeal = m;
+  $('meal-btn-1').classList.toggle('active', m===1);
+  $('meal-btn-2').classList.toggle('active', m===2);
+  mealState = ls('meal_' + m, '{}');
+  renderMeal();
+}
+function renderMeal() {
+  const meal = MEALS[currentMeal];
+  mealState = ls('meal_' + currentMeal, '{}');
+  const macroHtml = `<div class="meal-macros">${meal.macros.map(m=>`<div class="macro"><div class="macro-val">${m.val}</div><div class="macro-key">${m.key}</div></div>`).join('')}</div>`;
+  const tipHtml = `<div class="px20"><div class="meal-tip"><div class="meal-tip-hd">${meal.tip.hd}</div><div class="meal-tip-body">${meal.tip.body}</div></div></div>`;
+  const ingrHtml = `<div class="meal-section">
+    <div class="meal-sec-t">INGREDIENTS</div>
+    ${meal.ingredients.map(i=>`<div class="ingr-row">
+      <div><div class="ingr-name">${i.name}</div><div class="ingr-from">${i.from}</div></div>
+      <div class="ingr-amt">${i.amt}</div>
+    </div>`).join('')}
+  </div>`;
+  const asmHtml = `<div class="meal-section">
+    <div class="meal-sec-t">ASSEMBLY — 5 MINUTES, NO HEAT</div>
+    ${meal.assembly.map((s,i)=>`<div class="asm-step ${mealState[i]?'done-a':''}" onclick="toggleMealStep(${i})">
+      <div class="asm-n">${mealState[i]?'✓':i+1}</div>
+      <div><div class="asm-text">${s.text}</div>${s.sub?`<div class="asm-sub">${s.sub}</div>`:''}</div>
+    </div>`).join('')}
+  </div>`;
+  $('mealPageContent').innerHTML = macroHtml + tipHtml + ingrHtml + asmHtml + `<div class="meal-reset-btn" onclick="resetMeal()">↺ RESET STEPS</div>`;
+}
+function toggleMealStep(i) {
+  mealState[i] = !mealState[i];
+  lsSet('meal_' + currentMeal, mealState);
+  renderMeal();
+  if (mealState[i]) showToast('Step ' + (i+1) + ' done ✓');
+}
+function resetMeal() {
+  mealState = {};
+  lsSet('meal_' + currentMeal, mealState);
+  renderMeal();
+}
+
+renderMeal();
+
+// ══════════════════════════════════════════════════════
+// GUIDE ACCORDION
+// ══════════════════════════════════════════════════════
+function toggleAcc(id) {
+  const item = $('acc-' + id);
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+}
+function expandAllGuide() {
+  document.querySelectorAll('.acc-item').forEach(el => el.classList.add('open'));
+}
+
+// ══════════════════════════════════════════════════════
+// NOTIFICATIONS PERMISSION
+// ══════════════════════════════════════════════════════
+if ('Notification' in window && Notification.permission === 'default') {
+  setTimeout(() => {
+    Notification.requestPermission();
+  }, 3000);
+}
+
+// ══════════════════════════════════════════════════════
+// PWA SERVICE WORKER (inline)
+// ══════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  const swCode = `
+    const CACHE = 'dhaka-stack-v5';
+    self.addEventListener('install', e => {
+      self.skipWaiting();
+    });
+    self.addEventListener('activate', e => {
+      e.waitUntil(self.clients.claim());
+    });
+    self.addEventListener('fetch', e => {
+      if (e.request.method !== 'GET') return;
+      e.respondWith(
+        caches.open(CACHE).then(cache =>
+          cache.match(e.request).then(cached => {
+            const fresh = fetch(e.request).then(resp => {
+              if (resp && resp.status === 200) cache.put(e.request, resp.clone());
+              return resp;
+            }).catch(() => cached);
+            return cached || fresh;
+          })
+        )
+      );
+    });
+  `;
+  try {
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url).catch(() => {});
+  } catch(e) {}
+}
+</script>
+</body>
+</html>
