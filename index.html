@@ -9,9 +9,9 @@
 <meta name="theme-color" content="#FEFCF8">
 <meta name="description" content="Dhaka Stack v5 — Personal Nutrition OS for Farmgate, Dhaka">
 <title>Dhaka Stack v5</title>
-<!-- apple-touch-icon is set dynamically via canvas PNG in JS below -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231A160F'/%3E%3Cline x1='50' y1='80' x2='50' y2='32' stroke='%23E09A16' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M50 54 C42 46 34 40 30 28 C43 26 54 40 50 54' fill='%23E09A16'/%3E%3Cpath d='M50 54 C58 46 66 40 70 28 C57 26 46 40 50 54' fill='%23E09A16'/%3E%3Ccircle cx='50' cy='26' r='7' fill='%23E09A16'/%3E%3C/svg%3E">
-<link id="appleIcon" rel="apple-touch-icon">
+<!-- apple-touch-icon injected by JS as PNG canvas (SVG data URIs not supported by iOS) -->
+<link id="ati-link" rel="apple-touch-icon" href="">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231A160F'/%3E%3Cline x1='50' y1='80' x2='50' y2='32' stroke='%23E09A16' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M50 54 C42 46 34 40 30 28 C43 26 54 40 50 54' fill='%23E09A16'/%3E%3Cpath d='M50 54 C58 46 66 40 70 28 C57 26 46 40 50 54' fill='%23E09A16'/%3E%3Ccircle cx='50' cy='26' r='7' fill='%23E09A16'/%3E%3Ccircle cx='44' cy='82' r='3.5' fill='%23E09A16' opacity='.4'/%3E%3Ccircle cx='56' cy='82' r='3.5' fill='%23E09A16' opacity='.4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -41,7 +41,7 @@
   --safe-bot:env(safe-area-inset-bottom);
   --safe-l:env(safe-area-inset-left);
   --safe-r:env(safe-area-inset-right);
-  --tab-h:64px;
+  --nav-h:72px;
 }
 
 /* ═══ BASE ═════════════════════════════════════════ */
@@ -69,34 +69,45 @@ body{display:flex;flex-direction:column;}
 .day-delivery{background:var(--oceanl);color:var(--ocean);border:1px solid rgba(26,95,168,.2);}
 .day-normal{background:var(--cream);color:var(--ink3);border:1px solid var(--rule);}
 
-/* ═══ BOTTOM TAB BAR ════════════════════════════════ */
+/* ═══ BOTTOM NAVIGATION ═════════════════════════════ */
 .tab-bar{
-  position:fixed;bottom:0;left:0;right:0;z-index:100;
-  display:flex;background:rgba(254,252,248,.97);
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:200;
+  display:flex;
+  background:rgba(254,252,248,.97);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border-top:1.5px solid var(--warm);
-  padding:6px 4px calc(6px + var(--safe-bot));gap:2px;
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  box-shadow:0 -2px 16px rgba(26,22,15,.08);
+  padding:6px 4px calc(6px + var(--safe-bot));
+  gap:0;
+  box-shadow:0 -4px 20px rgba(26,22,15,.08);
 }
 .tab{
-  flex:1;padding:7px 2px 6px;
-  font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.5px;
+  flex:1;padding:7px 4px 5px;
+  font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:.5px;
   text-transform:uppercase;color:var(--ink3);
   border-radius:var(--r10);
+  border:none;
   cursor:pointer;transition:all .2s;
   text-align:center;user-select:none;white-space:nowrap;
+  display:flex;flex-direction:column;align-items:center;gap:1px;
 }
-.tab-icon{font-size:20px;display:block;margin-bottom:2px;}
+.tab-icon{font-size:20px;display:block;line-height:1.2;}
 .tab.active{color:var(--gold);}
-.tab.active .tab-icon-wrap{background:var(--goldll);border-radius:var(--r10);}
-.tab-icon-wrap{padding:4px 8px 2px;display:block;transition:background .2s;}
-.tab:active .tab-icon-wrap{background:var(--goldll);}
+.tab.active .tab-icon-wrap{
+  background:var(--goldll);border-radius:12px;
+  padding:3px 18px;
+}
+.tab-icon-wrap{padding:3px 18px;border-radius:12px;transition:all .2s;}
+.tab:active .tab-icon-wrap{background:var(--cream);}
+.tab-label{font-size:8px;font-weight:700;letter-spacing:.4px;margin-top:1px;}
 
 /* ═══ PAGE SYSTEM ══════════════════════════════════ */
 .pages{flex:1;overflow:hidden;position:relative;}
 .page{
   position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-  padding-bottom:calc(var(--tab-h) + 24px + var(--safe-bot));display:none;background:var(--paper);
+  padding-bottom:calc(var(--nav-h) + 24px + var(--safe-bot));
+  display:none;background:var(--paper);
 }
 .page.active{display:block;}
 
@@ -460,136 +471,194 @@ body{display:flex;flex-direction:column;}
    CALENDAR PAGE
 ═══════════════════════════════════════════════════ */
 .cal-view-pick{
-  display:flex;gap:6px;padding:14px 18px;
-  background:var(--paper);border-bottom:1px solid var(--warm);
+  display:flex;gap:0;margin:16px 18px;
+  background:var(--cream);border-radius:var(--r10);
+  padding:4px;border:1.5px solid var(--rule);
 }
 .cal-view-btn{
-  flex:1;padding:9px 4px;border:1.5px solid var(--rule);border-radius:var(--r10);
-  font-family:var(--mono);font-size:8.5px;font-weight:700;letter-spacing:.5px;
-  text-transform:uppercase;color:var(--ink3);background:white;cursor:pointer;
-  text-align:center;transition:all .2s;
+  flex:1;padding:9px 4px;border-radius:8px;
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--ink3);cursor:pointer;
+  text-align:center;border:none;background:transparent;transition:all .2s;
 }
-.cal-view-btn.active{background:var(--gold);color:white;border-color:var(--gold);}
-.cal-view-btn:active{transform:scale(.96);}
+.cal-view-btn.active{
+  background:white;color:var(--gold);
+  box-shadow:0 1px 6px rgba(26,22,15,.1);
+}
 
-/* ── Daily view ── */
-.cal-daily{padding:18px;}
+/* Daily view */
 .cal-day-hero{
-  background:linear-gradient(135deg,#1A160F,#2a1e0e);
-  border-radius:var(--r16);padding:20px;margin-bottom:16px;
-  position:relative;overflow:hidden;
+  margin:0 18px 16px;
+  background:linear-gradient(135deg,#1A160F,#1B3A2A);
+  border-radius:var(--r16);padding:22px;
+  box-shadow:var(--e2);position:relative;overflow:hidden;
 }
-.cal-day-hero::after{
-  content:'';position:absolute;top:-30px;right:-20px;width:120px;height:120px;
-  border-radius:50%;background:radial-gradient(circle,rgba(224,154,22,.2),transparent 70%);
+.cal-day-hero::before{
+  content:'';position:absolute;top:-30px;right:-30px;width:140px;height:140px;
+  border-radius:50%;background:radial-gradient(rgba(224,154,22,.2),transparent 70%);
 }
-.cdh-date{font-family:var(--mono);font-size:10px;color:var(--gold2);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;opacity:.8;}
-.cdh-day{font-family:var(--serif);font-size:28px;font-weight:900;color:#F5EFE4;line-height:1;}
-.cdh-sub{font-size:13px;color:rgba(245,239,228,.55);margin-top:6px;}
-.cal-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.cal-metric{background:white;border-radius:var(--r16);padding:16px 14px;border:1.5px solid var(--rule);box-shadow:var(--e1);}
-.cm-label{font-family:var(--mono);font-size:9px;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
-.cm-val{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--gold2);line-height:1;}
-.cm-sub{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:4px;}
-.cm-bar{height:6px;background:var(--warm);border-radius:3px;margin-top:8px;overflow:hidden;}
-.cm-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--forest),var(--green));transition:width .6s cubic-bezier(.4,0,.2,1);}
-.cal-checklist-summary{background:white;border-radius:var(--r16);padding:16px;border:1.5px solid var(--rule);box-shadow:var(--e1);}
-.cls-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.cls-title{font-family:var(--serif);font-size:17px;font-weight:700;}
-.cls-pct{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--forest);}
-.cls-dots{display:flex;gap:5px;flex-wrap:wrap;}
-.cls-dot{width:22px;height:22px;border-radius:var(--r6);border:2px solid var(--rule);}
-.cls-dot.done{background:var(--green);border-color:var(--green);}
-.cls-dot.miss{background:var(--firedl);border-color:rgba(194,58,40,.3);}
-.cls-dot.empty{background:var(--cream);}
+.cal-day-date{font-family:var(--mono);font-size:10px;color:var(--gold2);letter-spacing:2px;margin-bottom:6px;opacity:.8;}
+.cal-day-name{font-family:var(--serif);font-size:28px;font-weight:900;color:#F5EFE4;line-height:1;}
+.cal-day-stats{display:flex;gap:16px;margin-top:16px;}
+.cal-day-stat{flex:1;}
+.cal-day-stat-val{font-family:var(--serif);font-size:26px;font-weight:700;line-height:1;}
+.cal-day-stat-lbl{font-family:var(--mono);font-size:8px;letter-spacing:1px;opacity:.6;margin-top:2px;}
+.protein-color{color:var(--gold2);}
+.check-color{color:#7DDE9A;}
 
-/* ── Weekly view ── */
-.cal-weekly{padding:16px 18px;}
-.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.week-nav-btn{
-  width:36px;height:36px;border-radius:50%;border:1.5px solid var(--rule);
-  background:white;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  transition:all .15s;
+.cal-ring-row{
+  display:flex;gap:12px;margin:0 18px 16px;
 }
-.week-nav-btn:active{background:var(--goldl);}
-.week-label{font-family:var(--serif);font-size:16px;font-weight:700;text-align:center;}
-.week-bars{display:flex;gap:8px;align-items:flex-end;height:140px;margin-bottom:12px;}
-.wday{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.wday-bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;background:var(--warm);border-radius:6px 6px 0 0;overflow:hidden;}
-.wday-bar{width:100%;border-radius:6px 6px 0 0;transition:height .5s cubic-bezier(.4,0,.2,1);min-height:4px;}
-.wday-bar.hit{background:linear-gradient(180deg,var(--green),var(--forest));}
-.wday-bar.partial{background:linear-gradient(180deg,var(--gold2),var(--gold));}
-.wday-bar.miss{background:var(--rule);}
-.wday-bar.today{box-shadow:0 0 0 2px var(--gold2);}
-.wday-name{font-family:var(--mono);font-size:8px;font-weight:700;color:var(--ink3);text-transform:uppercase;}
-.wday-val{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--ink3);}
-.wday.is-today .wday-name{color:var(--gold);font-weight:700;}
-.week-legend{display:flex;gap:14px;justify-content:center;padding:10px 0 4px;}
-.wleg{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--ink3);}
-.wleg-dot{width:10px;height:10px;border-radius:3px;}
+.cal-ring-card{
+  flex:1;background:white;border-radius:var(--r16);padding:16px 12px;
+  text-align:center;box-shadow:var(--e1);border:1.5px solid var(--rule);
+}
+.cal-ring-title{font-family:var(--mono);font-size:9px;color:var(--ink3);letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
+.cal-ring-val{font-family:var(--serif);font-size:20px;font-weight:700;color:var(--gold2);margin-top:8px;line-height:1;}
+.cal-ring-sub{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:4px;}
 
-/* ── Quarterly / Monthly calendar ── */
-.cal-quarterly{padding:16px 18px;}
-.qtr-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.qtr-label{font-family:var(--serif);font-size:18px;font-weight:700;}
-.month-grid-wrap{margin-bottom:16px;}
-.month-title{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 8px;}
-.month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.mg-dow{font-family:var(--mono);font-size:8px;color:var(--ink3);text-align:center;padding:4px 0;}
-.mg-day{
-  aspect-ratio:1;border-radius:var(--r6);display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:10px;font-weight:700;cursor:pointer;transition:all .2s;
-  border:1.5px solid transparent;
+.cal-today-log{margin:0 18px 16px;}
+.cal-log-title{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.cal-log-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--rule);
 }
-.mg-day.empty{background:transparent;border-color:transparent;pointer-events:none;color:transparent;}
-.mg-day.no-data{background:var(--cream);color:var(--ink3);border-color:var(--rule);}
-.mg-day.hit{background:var(--forest);color:white;}
-.mg-day.partial{background:var(--gold2);color:white;}
-.mg-day.miss{background:var(--firedl);color:var(--fire);border-color:rgba(194,58,40,.2);}
-.mg-day.today-mark{box-shadow:0 0 0 2px var(--gold2);border-color:var(--gold2);}
-.mg-day.future{background:var(--paper);color:var(--rule);border-color:var(--warm);pointer-events:none;}
-.mg-day:active{transform:scale(.9);}
+.cal-log-row:last-child{border:none;}
+.cal-log-item{font-size:13px;font-weight:600;color:var(--ink);}
+.cal-log-status{font-family:var(--mono);font-size:10px;font-weight:700;}
+.status-done{color:var(--green);}
+.status-miss{color:var(--fire);}
 
-/* ── Yearly view ── */
-.cal-yearly{padding:16px 18px;}
-.yearly-title{font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:4px;}
-.yearly-sub{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-bottom:16px;}
-.year-grid-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px;}
-.year-grid{display:flex;gap:3px;width:max-content;}
-.year-col{display:flex;flex-direction:column;gap:3px;}
-.year-cell{
-  width:12px;height:12px;border-radius:2px;cursor:pointer;transition:all .15s;
+/* Weekly view */
+.cal-week-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 18px 12px;
 }
-.year-cell.empty{background:transparent;}
-.year-cell.no-data{background:var(--warm);}
-.year-cell.hit{background:var(--forest);}
-.year-cell.partial{background:var(--gold2);}
-.year-cell.miss{background:var(--firedl);}
-.year-months{display:flex;gap:3px;margin-bottom:4px;width:max-content;}
-.year-month-lbl{font-family:var(--mono);font-size:8px;color:var(--ink3);width:auto;padding-right:4px;}
-.year-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;}
-.ystat{background:white;border-radius:var(--r10);padding:12px;border:1.5px solid var(--rule);}
-.ystat-val{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--gold2);}
-.ystat-lbl{font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:3px;letter-spacing:.5px;line-height:1.4;}
+.cal-week-title{font-family:var(--serif);font-size:18px;font-weight:700;}
+.cal-week-nav{display:flex;gap:8px;}
+.cal-nav-btn{
+  width:32px;height:32px;border-radius:var(--r999);background:white;
+  border:1.5px solid var(--rule);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.cal-nav-btn:active{background:var(--cream);}
 
-/* ── Calendar detail panel ── */
-.cal-detail-panel{
-  position:fixed;inset:0;z-index:200;background:rgba(26,22,15,.55);
-  backdrop-filter:blur(6px);display:none;align-items:flex-end;
+.cal-week-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px;
+  padding:0 18px 16px;
 }
-.cal-detail-panel.show{display:flex;}
-.cdp-card{
-  background:white;border-radius:var(--r16) var(--r16) 0 0;
-  padding:20px 20px calc(20px + var(--safe-bot));width:100%;
-  box-shadow:0 -8px 32px rgba(26,22,15,.2);
+.cal-week-day{
+  border-radius:var(--r10);overflow:hidden;
+  border:1.5px solid var(--rule);background:white;
+  text-align:center;cursor:pointer;transition:all .15s;
 }
-.cdp-date{font-family:var(--mono);font-size:9px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
-.cdp-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:14px;}
-.cdp-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--warm);}
-.cdp-row:last-of-type{border:none;}
-.cdp-lbl{font-family:var(--mono);font-size:10px;color:var(--ink3);}
-.cdp-val{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--gold2);}
-.cdp-close{display:block;width:100%;padding:13px;background:var(--ink);color:white;border:none;border-radius:var(--r10);font-family:var(--mono);font-size:11px;font-weight:700;cursor:pointer;margin-top:12px;letter-spacing:1px;}
+.cal-week-day.today{border-color:var(--gold);box-shadow:0 2px 10px rgba(198,138,10,.2);}
+.cal-week-day:active{transform:scale(.96);}
+.cwday-name{
+  font-family:var(--mono);font-size:7px;font-weight:700;letter-spacing:.5px;
+  text-transform:uppercase;padding:6px 2px 3px;
+  color:var(--ink3);border-bottom:1px solid var(--rule);
+}
+.cal-week-day.today .cwday-name{background:var(--goldll);color:var(--gold);}
+.cwday-num{
+  font-family:var(--serif);font-size:15px;font-weight:700;
+  padding:4px 2px;color:var(--ink);
+}
+.cwday-bar-wrap{height:40px;display:flex;align-items:flex-end;justify-content:center;padding:0 4px 4px;gap:2px;}
+.cwday-bar{
+  flex:1;border-radius:3px 3px 0 0;transition:height .4s cubic-bezier(.4,0,.2,1);
+  min-height:2px;
+}
+.cwday-bar.protein-bar{background:linear-gradient(180deg,var(--gold2),var(--gold));}
+.cwday-bar.check-bar{background:linear-gradient(180deg,var(--green),var(--forest));}
+.cwday-dots{display:flex;gap:3px;justify-content:center;padding:4px 2px 6px;}
+.cwday-dot{width:5px;height:5px;border-radius:50%;background:var(--rule);}
+.cwday-dot.done{background:var(--green);}
+
+.cal-week-legend{
+  display:flex;gap:16px;padding:0 18px 16px;
+}
+.cal-legend-item{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--ink3);}
+.cal-legend-dot{width:10px;height:10px;border-radius:3px;}
+
+.cal-week-summary{margin:0 18px 16px;}
+.cal-week-sum-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.cal-sum-card{
+  background:white;border-radius:var(--r14);padding:14px;
+  border:1.5px solid var(--rule);box-shadow:var(--e1);
+}
+.cal-sum-val{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--gold2);line-height:1;}
+.cal-sum-lbl{font-family:var(--mono);font-size:9px;color:var(--ink3);margin-top:4px;letter-spacing:.5px;}
+
+/* Quarterly view */
+.cal-quarter-grid{padding:0 18px;}
+.cal-quarter-week{
+  display:grid;grid-template-columns:auto repeat(7,1fr);gap:4px;
+  margin-bottom:4px;align-items:center;
+}
+.cal-qweek-label{
+  font-family:var(--mono);font-size:8px;color:var(--ink3);
+  width:28px;text-align:right;padding-right:4px;
+}
+.cal-qday{
+  height:22px;border-radius:4px;
+  transition:all .2s;position:relative;
+}
+.cal-qday.future{background:var(--warm);opacity:.4;}
+.cal-qday.empty{background:var(--cream);}
+.cal-qday.level-0{background:var(--warm);}
+.cal-qday.level-1{background:#D4EDDA;}
+.cal-qday.level-2{background:#A8D8B4;}
+.cal-qday.level-3{background:#6DC48A;}
+.cal-qday.level-4{background:var(--green);}
+.cal-qday.level-5{background:var(--forest);}
+.cal-qday.today-q{ring:2px solid var(--gold);outline:2px solid var(--gold);}
+
+.cal-quarter-months{
+  display:flex;gap:4px;padding:0 18px 8px;padding-left:46px;
+}
+.cal-qmonth-label{font-family:var(--mono);font-size:8px;color:var(--ink3);flex:1;text-align:center;}
+
+.cal-quarter-legend{
+  display:flex;align-items:center;gap:6px;padding:12px 18px;
+  font-family:var(--mono);font-size:9px;color:var(--ink3);
+}
+.ql-box{width:14px;height:14px;border-radius:3px;}
+
+/* Yearly view */
+.cal-year-section{padding:0 18px;}
+.cal-year-month{margin-bottom:20px;}
+.cal-year-month-name{
+  font-family:var(--mono);font-size:9px;font-weight:700;color:var(--gold);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;
+}
+.cal-year-month-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:3px;
+}
+.cal-yday{
+  aspect-ratio:1;border-radius:3px;
+  transition:all .2s;
+}
+.cal-yday.empty{background:transparent;}
+.cal-yday.future{background:var(--cream);opacity:.5;}
+.cal-yday.level-0{background:var(--warm);}
+.cal-yday.level-1{background:#D4EDDA;}
+.cal-yday.level-2{background:#A8D8B4;}
+.cal-yday.level-3{background:#6DC48A;}
+.cal-yday.level-4{background:var(--green);}
+.cal-yday.level-5{background:var(--forest);}
+.cal-yday.today-y{outline:2px solid var(--gold);}
+
+.cal-year-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  margin:0 18px 20px;
+}
+.cal-year-stat{
+  background:white;border-radius:var(--r14);padding:14px 10px;
+  text-align:center;border:1.5px solid var(--rule);box-shadow:var(--e1);
+}
+.cal-year-stat-val{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--gold2);line-height:1;}
+.cal-year-stat-lbl{font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:4px;letter-spacing:.3px;line-height:1.4;}
 
 /* ═══════════════════════════════════════════════════
    GUIDE PAGE
@@ -659,7 +728,7 @@ body{display:flex;flex-direction:column;}
 
 /* ═══ TOAST ═════════════════════════════════════════ */
 .toast{
-  position:fixed;bottom:calc(var(--tab-h) + 20px + var(--safe-bot));left:50%;
+  position:fixed;bottom:calc(var(--nav-h) + 16px + var(--safe-bot));left:50%;
   transform:translateX(-50%) translateY(16px);
   background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;
   font-weight:700;padding:10px 22px;border-radius:var(--r999);letter-spacing:.5px;
@@ -699,7 +768,7 @@ em{font-style:italic;}
 <!-- ─── HEADER ─── -->
 <div class="app-header">
   <div class="logo-lockup">
-    <svg class="logo-mark" width="34" height="34" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <svg class="logo-mark" width="34" height="34" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Dhaka Stack">
       <rect width="100" height="100" rx="22" fill="#1A160F"/>
       <line x1="50" y1="80" x2="50" y2="32" stroke="#E09A16" stroke-width="7" stroke-linecap="round"/>
       <path d="M50 54 C42 46 34 40 30 28 C43 26 54 40 50 54" fill="#E09A16"/>
@@ -719,10 +788,11 @@ em{font-style:italic;}
   </div>
 </div>
 
-<!-- ─── PAGES ─── -->
 <div class="pages">
 
-<!-- ═══ TODAY ═══ -->
+<!-- ════════════════════════════════════════════════
+     TODAY PAGE
+════════════════════════════════════════════════ -->
 <div class="page active" id="page-today">
   <div class="today-banner">
     <div class="banner-logo">
@@ -737,7 +807,7 @@ em{font-style:italic;}
         <circle cx="56" cy="82" r="3.5" fill="#E09A16" opacity=".3"/>
       </svg>
       <div class="banner-logo-text">
-        <div class="banner-logo-sub" style="font-family:var(--mono);font-size:9px;color:var(--gold2);letter-spacing:2px;text-transform:uppercase;opacity:.7;">Dhaka Stack v5 · Farmgate</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--gold2);letter-spacing:2px;text-transform:uppercase;opacity:.7;">Dhaka Stack v5 · Farmgate</div>
         <div style="font-family:var(--serif);font-size:30px;font-weight:900;color:#F5EFE4;line-height:1;letter-spacing:-.5px;" id="todayDayName">Sunday</div>
       </div>
     </div>
@@ -754,7 +824,7 @@ em{font-style:italic;}
     <div class="install-icon">📱</div>
     <div class="install-text">
       <div class="install-title">Add to Home Screen</div>
-      <div class="install-sub">Safari → Share → "Add to Home Screen" for offline access + full-screen mode</div>
+      <div class="install-sub">Safari → Share → "Add to Home Screen" for offline access + full-screen on iPhone</div>
     </div>
     <div class="install-close" onclick="document.getElementById('installBanner').classList.add('hidden')">✕</div>
   </div>
@@ -801,7 +871,7 @@ em{font-style:italic;}
     <div class="emg-grid">
       <div class="emg-card r"><div class="emg-sit">NO MONEY</div><div class="emg-resp">6 eggs + 100g dal + 500ml milk = 95g protein, ৳85. Your absolute floor.</div></div>
       <div class="emg-card"><div class="emg-sit">NO TIME TO COOK</div><div class="emg-resp">Soaked chickpeas + peanuts + milk. Zero cooking. 40g protein. Grab and go.</div></div>
-      <div class="emg-card"><div class="emg-sit">BINGE URGE (11 PM)</div><div class="emg-resp">250ml UHT milk + 40g peanuts. Wait 15 min. 90% of urges resolve.</div></div>
+      <div class="emg-card"><div class="emg-sit">BINGE URGE (11 PM)</div><div class="emg-resp">250ml UHT milk + 40g peanuts. Wait 15 min. 90% of urges resolve. If still hungry: C-6.</div></div>
       <div class="emg-card g"><div class="emg-sit">ALREADY BINGED</div><div class="emg-resp">Next meal: normal system. Zero guilt. Zero skipping. One meal = 4.8% of your week.</div></div>
       <div class="emg-card"><div class="emg-sit">SICK DAY</div><div class="emg-resp">Garlic+ginger bone broth. 4 boiled eggs. 500ml milk. No full meals.</div></div>
       <div class="emg-card r"><div class="emg-sit">EXAM MORNING</div><div class="emg-resp">500ml UHT milk + 2 raw eggs + 3 dates + kalonji. Shake. 30g protein. 3 minutes.</div></div>
@@ -810,7 +880,9 @@ em{font-style:italic;}
   <div style="height:20px;"></div>
 </div>
 
-<!-- ═══ SHOP ═══ -->
+<!-- ════════════════════════════════════════════════
+     SHOP PAGE
+════════════════════════════════════════════════ -->
 <div class="page" id="page-shop">
   <div class="pg-hd">
     <span class="pg-hd-t">Karwan Bazar · Sunday 6–9 AM</span>
@@ -828,7 +900,7 @@ em{font-style:italic;}
     </div>
     <div class="vm-body">
       <div class="vm-text">"ভাই, শুক্রবার টপসাইড লিন বিফ ৪০০গ্রাম, কলিজা ১৫০গ্রাম, হার্ট ১৫০গ্রাম, নলার হাড্ডি ৩০০গ্রাম দরকার। আগামীকাল ডেলিভারি হবে কি?"</div>
-      <div class="vm-english">English: Topside lean beef 400g, liver 150g, heart 150g, marrow bones 300g. Can you deliver tomorrow?<br><br>Total ≈ ৳390–470</div>
+      <div class="vm-english">English: "Bhai, Friday I need: topside lean beef 400g, liver 150g, heart 150g, marrow bones 300g. Can you deliver tomorrow?"<br><br>Cost: Topside 400g ≈ ৳310 · Liver 150g ≈ ৳35–60 · Heart 150g ≈ ৳45–70 · Bones ≈ ৳0–30 · Total ≈ ৳390–470</div>
     </div>
   </div>
   <div style="margin:0 20px 16px;" class="callout b">
@@ -838,7 +910,9 @@ em{font-style:italic;}
   <div style="height:20px;"></div>
 </div>
 
-<!-- ═══ COOK ═══ -->
+<!-- ════════════════════════════════════════════════
+     COOK PAGE
+════════════════════════════════════════════════ -->
 <div class="page" id="page-cook">
   <div class="pg-hd">
     <span class="pg-hd-t">Cook Protocol</span>
@@ -880,7 +954,9 @@ em{font-style:italic;}
   </div>
 </div>
 
-<!-- ═══ MEALS ═══ -->
+<!-- ════════════════════════════════════════════════
+     MEALS PAGE
+════════════════════════════════════════════════ -->
 <div class="page" id="page-meals">
   <div class="pg-hd"><span class="pg-hd-t">Meal Assembly</span></div>
   <div class="meal-pick">
@@ -898,22 +974,29 @@ em{font-style:italic;}
   <div id="mealPageContent"></div>
 </div>
 
-<!-- ═══ CALENDAR ═══ -->
+<!-- ════════════════════════════════════════════════
+     CALENDAR PAGE
+════════════════════════════════════════════════ -->
 <div class="page" id="page-calendar">
   <div class="pg-hd">
     <span class="pg-hd-t">Progress Calendar</span>
-    <span class="pg-hd-btn" onclick="exportCalData()">Export</span>
+    <span class="pg-hd-btn" id="calLogBtn" onclick="logTodayManually()">Log Today</span>
   </div>
+
+  <!-- View picker -->
   <div class="cal-view-pick">
-    <div class="cal-view-btn active" id="cv-daily" onclick="setCalView('daily')">Daily</div>
-    <div class="cal-view-btn" id="cv-weekly" onclick="setCalView('weekly')">Weekly</div>
-    <div class="cal-view-btn" id="cv-quarterly" onclick="setCalView('quarterly')">Monthly</div>
-    <div class="cal-view-btn" id="cv-yearly" onclick="setCalView('yearly')">Yearly</div>
+    <button class="cal-view-btn active" id="calv-daily" onclick="selectCalView('daily')">Daily</button>
+    <button class="cal-view-btn" id="calv-weekly" onclick="selectCalView('weekly')">Weekly</button>
+    <button class="cal-view-btn" id="calv-quarterly" onclick="selectCalView('quarterly')">Quarterly</button>
+    <button class="cal-view-btn" id="calv-yearly" onclick="selectCalView('yearly')">Yearly</button>
   </div>
+
   <div id="calContent"></div>
 </div>
 
-<!-- ═══ GUIDE ═══ -->
+<!-- ════════════════════════════════════════════════
+     GUIDE PAGE
+════════════════════════════════════════════════ -->
 <div class="page" id="page-guide">
   <div class="pg-hd">
     <span class="pg-hd-t">Full Reference Guide</span>
@@ -926,8 +1009,8 @@ em{font-style:italic;}
   <div class="acc-item" id="acc-00">
     <div class="acc-hd" onclick="toggleAcc('00')"><div class="acc-num">00</div><div class="acc-title">System Philosophy</div><div class="acc-arrow">▼</div></div>
     <div class="acc-body">
-      <div class="callout g"><div class="callout-lbl">Why You Gained 20 kg — The Real Reason</div><p>Not laziness. Not willpower failure. Your <strong>default environment was broken</strong>. The fix is not discipline — it is replacing a bad default with a better one.</p></div>
-      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Bangladesh Rice</div><p>Bangladeshi rice has documented inorganic arsenic contamination (0.2–0.4 mg/kg). Switching to chickpeas, sweet potato, and oats eliminates this exposure.</p></div>
+      <div class="callout g"><div class="callout-lbl">Why You Gained 20 kg — The Real Reason</div><p>Not laziness. Not willpower failure. Your <strong>default environment was broken</strong>. Dhaka takeout is calorie-dense, protein-poor, oil-heavy, and decision-free. The fix is not discipline — it is replacing a bad default with a better one.</p></div>
+      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Bangladesh Rice — A Real Reason to Switch</div><p>Bangladeshi rice has documented inorganic arsenic contamination. Switching to chickpeas, sweet potato, and oats eliminates this exposure while giving better fiber, lower GI, and more micronutrients.</p></div>
       <div class="guide-h3">The Three Laws</div>
       <div class="callout b"><div class="callout-lbl">Law 1 — Automate Decisions</div><p>Every food choice made in real time is a system failure. This system pre-makes every decision. You follow the script.</p></div>
       <div class="callout b" style="margin-top:8px;"><div class="callout-lbl">Law 2 — Protein First, Always</div><p>Protein builds muscle, kills hunger (CCK + PYY hormones), and protects muscle during a cut.</p></div>
@@ -937,9 +1020,11 @@ em{font-style:italic;}
         <thead><tr><th>Metric</th><th>Now</th><th>Target</th></tr></thead>
         <tbody>
           <tr><td>Weight</td><td>88 kg</td><td class="green">71–74 kg</td></tr>
+          <tr><td>Body Fat</td><td>~25–27%</td><td class="green">13–15%</td></tr>
           <tr><td>Daily Protein</td><td>~80–90g</td><td class="green">155–165g</td></tr>
           <tr><td>Daily Calories</td><td>~2,400+</td><td class="green">1,600–1,800</td></tr>
           <tr><td>Daily Spend</td><td>~৳500–1,000</td><td class="green">~৳240–280</td></tr>
+          <tr><td>Food Decisions/Day</td><td>10–15</td><td class="green">0</td></tr>
         </tbody>
       </table></div>
     </div>
@@ -948,29 +1033,16 @@ em{font-style:italic;}
   <div class="acc-item" id="acc-01">
     <div class="acc-hd" onclick="toggleAcc('01')"><div class="acc-num">01</div><div class="acc-title">Kitchen Lab Setup</div><div class="acc-arrow">▼</div></div>
     <div class="acc-body">
-      <div class="callout"><div class="callout-lbl">Total one-time cost: ~৳2,500</div><p>Less than 5 days of current takeout spend.</p></div>
+      <div class="callout"><div class="callout-lbl">Total one-time cost: ~৳2,500</div><p>Less than 5 days of current takeout spend. Three items: induction cooker, stainless pot, 6 containers.</p></div>
       <div class="tbl-wrap"><table class="tbl">
         <thead><tr><th>Item</th><th>Spec</th><th>Cost</th><th>Where</th></tr></thead>
         <tbody>
-          <tr><td>🔥 Induction Cooker</td><td>1000–1500W, dial</td><td>৳1,200–1,800</td><td>Elephant Road 2F</td></tr>
-          <tr><td>🍲 Stainless Pot 4–5L</td><td>With tight lid. Stainless ONLY.</td><td>৳400–700</td><td>Karwan Bazar housewares</td></tr>
-          <tr><td>📦 6 Airtight Containers</td><td>Lock&amp;Lock style</td><td>৳550–800</td><td>New Market basement</td></tr>
+          <tr><td>🔥 Induction Cooker</td><td>1000–1500W, dial</td><td>৳1,200–1,800</td><td>Elephant Road 2F or Daraz</td></tr>
+          <tr><td>🍲 Stainless Steel Pot 4–5L</td><td>With tight lid. Stainless ONLY.</td><td>৳400–700</td><td>Karwan Bazar housewares</td></tr>
+          <tr><td>📦 6 Airtight Containers</td><td>Rectangle, Lock&Lock style</td><td>৳550–800</td><td>New Market basement</td></tr>
         </tbody>
       </table></div>
-      <div class="guide-h3">Container System</div>
-      <div class="tbl-wrap"><table class="tbl">
-        <thead><tr><th>Container</th><th>Role</th><th>Life</th></tr></thead>
-        <tbody>
-          <tr><td>C-1 (2.5L)</td><td>🥩 MEAT — chicken Mon–Thu / beef Fri–Mon</td><td>5–6 days</td></tr>
-          <tr><td>C-2 (1.5L)</td><td>🥚 EGGS — 10–12 boiled, peeled</td><td>5 days</td></tr>
-          <tr><td>C-3 (1L)</td><td>🫀 ORGANS — liver + heart. EAT BY MONDAY</td><td class="red-c">3–4 days MAX</td></tr>
-          <tr><td>C-4 ×2 (1L)</td><td>🍲 BROTH — door shelf</td><td>4–5 days</td></tr>
-          <tr><td>C-5 (1L)</td><td>🫘 SOAK/SPROUT — 80g chickpeas daily cycle</td><td>Daily</td></tr>
-          <tr><td>C-6 ×2 (800ml)</td><td>🥗 GRAB MEALS — pre-assembled</td><td class="red-c">24–36 hrs</td></tr>
-          <tr><td>C-7 (300ml glass)</td><td>🧂 SPICE JAR — master blend</td><td>5 weeks</td></tr>
-        </tbody>
-      </table></div>
-      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Dhaka Heat — Non-Negotiable Safety Rule</div><p>Move everything into fridge <strong>within 20 minutes of cooking completion.</strong> Always.</p></div>
+      <div class="callout r" style="margin-top:10px;"><div class="callout-lbl">Dhaka Heat — Non-Negotiable Safety Rule</div><p>Bacterial doubling time in cooked protein at 30–38°C: ~20 minutes. Move everything into fridge <strong>within 20 minutes of cooking completion.</strong></p></div>
     </div>
   </div>
 
@@ -984,10 +1056,42 @@ em{font-style:italic;}
           <tr><td>Masoor Dal (dry)</td><td>26g</td><td class="green">~৳12</td><td><span class="bdg bt">Wed Dal Bomb</span></td></tr>
           <tr><td>Chickpeas (dry)</td><td>19g</td><td>~৳16</td><td><span class="bdg ba">Daily Meal 1 base</span></td></tr>
           <tr><td>Farm Eggs (chicken)</td><td>7g/egg</td><td>~৳19</td><td><span class="bdg bg">Non-negotiable daily</span></td></tr>
-          <tr><td>Peanuts (raw)</td><td>26g</td><td>~৳20</td><td><span class="bdg ba">Craving killer</span></td></tr>
           <tr><td>Chicken Breast</td><td>31g</td><td>~৳28</td><td><span class="bdg bg">Mon–Thu primary</span></td></tr>
           <tr><td>Duck Eggs</td><td>9g/egg</td><td>~৳30</td><td><span class="bdg bg">Daily Omega-3+choline</span></td></tr>
           <tr><td>Beef Topside</td><td>29–31g</td><td>~৳38</td><td><span class="bdg ba">Fri–Mon + creatine</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="acc-item" id="acc-09">
+    <div class="acc-hd" onclick="toggleAcc('09')"><div class="acc-num">09</div><div class="acc-title">Weekly Operating Schedule</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="tbl-wrap"><table class="tbl">
+        <thead><tr><th>Day</th><th>Type</th><th>Key Actions</th></tr></thead>
+        <tbody>
+          <tr style="background:var(--amberll);"><td><strong>SUN</strong></td><td>🍳 Cook + 🛒 Shop</td><td>6–9 AM: Karwan Bazar. Night: Session 1. Text vendor.</td></tr>
+          <tr><td>MON</td><td>Assembly only</td><td>Chicken Day 1. Refill C-5 tonight.</td></tr>
+          <tr><td>TUE</td><td>🐟 Fish Day</td><td>Buy tilapia 200g fresh. Boil 12 min.</td></tr>
+          <tr><td>WED</td><td>Assembly or Dal</td><td>Assembly OR Dal Bomb. Check C-1 chicken.</td></tr>
+          <tr><td>THU</td><td>Last of batch</td><td>Chicken Day 4. Confirm Friday delivery.</td></tr>
+          <tr style="background:var(--oceanl);"><td><strong>FRI</strong></td><td>📦 Delivery + 🍳 Cook</td><td>On delivery: fridge immediately. Evening: Session 2.</td></tr>
+          <tr><td>SAT</td><td>Flex Day</td><td>Beef Day. If going out: eat Meal 1 at home first.</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <div class="acc-item" id="acc-12">
+    <div class="acc-hd" onclick="toggleAcc('12')"><div class="acc-num">12</div><div class="acc-title">Supplements — Only What Works</div><div class="acc-arrow">▼</div></div>
+    <div class="acc-body">
+      <div class="callout r"><div class="callout-lbl">The supplement industry is 95% marketing</div><p>Only three compounds have replicated RCT evidence strong enough to justify purchasing.</p></div>
+      <div class="tbl-wrap" style="margin-top:10px;"><table class="tbl">
+        <thead><tr><th>Supplement</th><th>Dose</th><th>Evidence</th><th>Monthly Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Creatine Monohydrate</td><td>5g/day, any time</td><td><span class="bdg bg">TIER 1 — 1,000+ RCTs</span></td><td>৳600–1,200</td></tr>
+          <tr><td>Vitamin D3</td><td>1,000–2,000 IU with fatty meal</td><td><span class="bdg ba">TIER 2 — Strong if deficient</span></td><td>৳200–400</td></tr>
+          <tr><td>Ashwagandha (KSM-66 only)</td><td>300mg/day with food</td><td><span class="bdg ba">TIER 2 — 15+ RCTs</span></td><td>৳400–800</td></tr>
         </tbody>
       </table></div>
     </div>
@@ -999,14 +1103,14 @@ em{font-style:italic;}
       <div class="do-grid">
         <div class="do-col">
           <div class="do-head">✓ Always Do</div>
-          <div class="dd-item">Lemon on every meal, AFTER serving</div>
+          <div class="dd-item">Lemon on every meal, squeezed AFTER serving</div>
           <div class="dd-item">1 cup bone broth before sleep, every night</div>
-          <div class="dd-item">Nightly chickpea soak — 30 seconds</div>
-          <div class="dd-item">Eat Meal 1 before any social event</div>
-          <div class="dd-item">Add ginger to every beef cook</div>
-          <div class="dd-item">Morning sun 15–20 min, 5 days/week</div>
-          <div class="dd-item">Eat the ENTIRE egg including yolk</div>
-          <div class="dd-item">Fridge cooked food within 20 min</div>
+          <div class="dd-item">Nightly chickpea soak. 30 seconds. Every night.</div>
+          <div class="dd-item">Eat Meal 1 before any social event. Always.</div>
+          <div class="dd-item">Add ginger to every beef cook. No exceptions.</div>
+          <div class="dd-item">15–20 min direct morning sun, 5 days/week</div>
+          <div class="dd-item">Eat the ENTIRE egg including yolk. Every time.</div>
+          <div class="dd-item">Fridge anything cooked within 20 minutes</div>
         </div>
         <div class="dont-col">
           <div class="dont-head">✕ Never Do</div>
@@ -1015,9 +1119,9 @@ em{font-style:italic;}
           <div class="dd-item">Pour the broth down the drain</div>
           <div class="dd-item">Add refined sugar to anything</div>
           <div class="dd-item">Cook IN oil (mustard oil = cold finish only)</div>
-          <div class="dd-item">Drink soft drinks / packaged juice</div>
-          <div class="dd-item">Restaurant food more than once per week</div>
-          <div class="dd-item">Remove the fat layer from cold broth</div>
+          <div class="dd-item">Drink soft drinks, packaged juice, energy drinks</div>
+          <div class="dd-item">Skip eggs on any day (minimum 4)</div>
+          <div class="dd-item">Remove white fat layer from cold broth</div>
         </div>
       </div>
     </div>
@@ -1043,35 +1147,35 @@ em{font-style:italic;}
   </div>
 
   <div style="height:20px;"></div>
-</div><!-- /guide -->
+</div>
 
 </div><!-- /pages -->
 
-<!-- ─── BOTTOM TAB BAR ─── -->
+<!-- ─── BOTTOM NAVIGATION ─── -->
 <div class="tab-bar">
-  <div class="tab active" onclick="switchTab('today')">
-    <span class="tab-icon-wrap"><span class="tab-icon">📅</span></span>
-    <span style="display:block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">TODAY</span>
+  <div class="tab active" id="tab-today" onclick="switchTab('today')">
+    <div class="tab-icon-wrap"><span class="tab-icon">📅</span></div>
+    <span class="tab-label">TODAY</span>
   </div>
-  <div class="tab" onclick="switchTab('shop')">
-    <span class="tab-icon-wrap"><span class="tab-icon">🛒</span></span>
-    <span style="display:block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">SHOP</span>
+  <div class="tab" id="tab-shop" onclick="switchTab('shop')">
+    <div class="tab-icon-wrap"><span class="tab-icon">🛒</span></div>
+    <span class="tab-label">SHOP</span>
   </div>
-  <div class="tab" onclick="switchTab('cook')">
-    <span class="tab-icon-wrap"><span class="tab-icon">🍲</span></span>
-    <span style="display:block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">COOK</span>
+  <div class="tab" id="tab-cook" onclick="switchTab('cook')">
+    <div class="tab-icon-wrap"><span class="tab-icon">🍲</span></div>
+    <span class="tab-label">COOK</span>
   </div>
-  <div class="tab" onclick="switchTab('meals')">
-    <span class="tab-icon-wrap"><span class="tab-icon">🥣</span></span>
-    <span style="display:block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">MEALS</span>
+  <div class="tab" id="tab-meals" onclick="switchTab('meals')">
+    <div class="tab-icon-wrap"><span class="tab-icon">🥣</span></div>
+    <span class="tab-label">MEALS</span>
   </div>
-  <div class="tab" onclick="switchTab('calendar')">
-    <span class="tab-icon-wrap"><span class="tab-icon">📆</span></span>
-    <span style="display:block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">CAL</span>
+  <div class="tab" id="tab-calendar" onclick="switchTab('calendar')">
+    <div class="tab-icon-wrap"><span class="tab-icon">📆</span></div>
+    <span class="tab-label">PROGRESS</span>
   </div>
-  <div class="tab" onclick="switchTab('guide')">
-    <span class="tab-icon-wrap"><span class="tab-icon">📚</span></span>
-    <span style="display:block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">GUIDE</span>
+  <div class="tab" id="tab-guide" onclick="switchTab('guide')">
+    <div class="tab-icon-wrap"><span class="tab-icon">📚</span></div>
+    <span class="tab-label">GUIDE</span>
   </div>
 </div>
 
@@ -1086,117 +1190,131 @@ em{font-style:italic;}
   <button class="alarm-dismiss" onclick="dismissAlarm()">GOT IT</button>
 </div>
 
-<!-- CALENDAR DETAIL PANEL -->
-<div class="cal-detail-panel" id="calDetailPanel" onclick="closeCalDetail(event)">
-  <div class="cdp-card" id="calDetailCard">
-    <div class="cdp-date" id="cdpDate"></div>
-    <div class="cdp-title" id="cdpTitle"></div>
-    <div id="cdpRows"></div>
-    <button class="cdp-close" onclick="document.getElementById('calDetailPanel').classList.remove('show')">Close</button>
-  </div>
-</div>
-
 <script>
-// ══════════════════════════════════════════
-// APPLE TOUCH ICON — Canvas PNG generation
-// Safari on iOS requires a real PNG, not SVG
-// ══════════════════════════════════════════
-(function generateAppleIcon() {
+// ══════════════════════════════════════════════════════
+// CHANGE 1: Generate PNG icon for iPhone Home Screen
+// iOS does not support SVG data-URI apple-touch-icons.
+// We draw the sprout logo onto a canvas and inject PNG.
+// ══════════════════════════════════════════════════════
+(function generateAppIcon() {
   try {
     const size = 180;
     const c = document.createElement('canvas');
     c.width = size; c.height = size;
     const ctx = c.getContext('2d');
+
     // Rounded rect background
-    const r = 36;
+    const r = 40;
     ctx.beginPath();
-    ctx.moveTo(r,0); ctx.lineTo(size-r,0);
-    ctx.quadraticCurveTo(size,0,size,r);
-    ctx.lineTo(size,size-r);
-    ctx.quadraticCurveTo(size,size,size-r,size);
-    ctx.lineTo(r,size);
-    ctx.quadraticCurveTo(0,size,0,size-r);
-    ctx.lineTo(0,r);
-    ctx.quadraticCurveTo(0,0,r,0);
+    ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
+    ctx.quadraticCurveTo(size, 0, size, r);
+    ctx.lineTo(size, size - r);
+    ctx.quadraticCurveTo(size, size, size - r, size);
+    ctx.lineTo(r, size);
+    ctx.quadraticCurveTo(0, size, 0, size - r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
     ctx.closePath();
-    ctx.fillStyle='#1A160F';
+    ctx.fillStyle = '#1A160F';
     ctx.fill();
+
+    const gold = '#E09A16';
+    ctx.strokeStyle = gold;
+    ctx.fillStyle = gold;
+
     // Stem
-    ctx.strokeStyle='#E09A16';
-    ctx.fillStyle='#E09A16';
-    ctx.lineWidth=14;
-    ctx.lineCap='round';
+    ctx.lineWidth = 13;
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(90,148); ctx.lineTo(90,58);
+    ctx.moveTo(90, 145);
+    ctx.lineTo(90, 58);
     ctx.stroke();
+
     // Left leaf
     ctx.beginPath();
-    ctx.moveTo(90,97);
-    ctx.bezierCurveTo(76,82,60,72,54,50);
-    ctx.bezierCurveTo(76,46,96,72,90,97);
+    ctx.moveTo(90, 98);
+    ctx.bezierCurveTo(75, 84, 60, 72, 54, 50);
+    ctx.bezierCurveTo(76, 47, 98, 73, 90, 98);
     ctx.fill();
+
     // Right leaf
     ctx.beginPath();
-    ctx.moveTo(90,97);
-    ctx.bezierCurveTo(104,82,120,72,126,50);
-    ctx.bezierCurveTo(104,46,84,72,90,97);
+    ctx.moveTo(90, 98);
+    ctx.bezierCurveTo(105, 84, 120, 72, 126, 50);
+    ctx.bezierCurveTo(104, 47, 82, 73, 90, 98);
     ctx.fill();
-    // Top circle
+
+    // Top circle (bud)
     ctx.beginPath();
-    ctx.arc(90,46,14,0,Math.PI*2);
+    ctx.arc(90, 47, 13, 0, Math.PI * 2);
     ctx.fill();
-    // Bottom dots
-    ctx.globalAlpha=0.4;
-    ctx.beginPath(); ctx.arc(79,151,6,0,Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(101,151,6,0,Math.PI*2); ctx.fill();
-    ctx.globalAlpha=1;
-    document.getElementById('appleIcon').href = c.toDataURL('image/png');
+
+    // Bottom dots (roots)
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath(); ctx.arc(79, 150, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(101, 150, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    const png = c.toDataURL('image/png');
+    const link = document.getElementById('ati-link');
+    if (link) link.href = png;
+
+    // Also set favicon
+    let fav = document.querySelector('link[rel="icon"]');
+    if (!fav) { fav = document.createElement('link'); fav.rel = 'icon'; document.head.appendChild(fav); }
+    fav.type = 'image/png';
+    fav.href = png;
   } catch(e) {}
 })();
 
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // UTILS
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 const $ = id => document.getElementById(id);
 const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const dayShort = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function showToast(msg) {
-  const t=$('toast'); t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
+  const t = $('toast'); t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
 }
 function showAlarm(msg, sub) {
-  $('alarmMsg').textContent=msg; $('alarmSub').textContent=sub;
+  $('alarmMsg').textContent = msg;
+  $('alarmSub').textContent = sub;
   $('alarm').classList.add('show');
-  if(navigator.vibrate) navigator.vibrate([300,100,300,100,500]);
+  if (navigator.vibrate) navigator.vibrate([300,100,300,100,500]);
+  if (Notification.permission === 'granted') new Notification('Dhaka Stack', { body: msg });
 }
-function dismissAlarm(){$('alarm').classList.remove('show');}
+function dismissAlarm() { $('alarm').classList.remove('show'); }
 
-function ls(key,def='null'){
-  try{const v=localStorage.getItem(key);return v!==null?JSON.parse(v):JSON.parse(def);}
-  catch(e){return JSON.parse(def);}
+function ls(key, def='null') {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : JSON.parse(def); }
+  catch(e) { return JSON.parse(def); }
 }
-function lsSet(key,val){try{localStorage.setItem(key,JSON.stringify(val));}catch(e){}}
+function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {} }
 
-// Date helpers
-function dateKey(d){ return d.toISOString().slice(0,10); } // YYYY-MM-DD
-const TODAY = new Date();
-const TODAY_KEY = dateKey(TODAY);
+function dateKey(d) { return d.toDateString(); }
+function dateStr(d) { return d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear(); }
 
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // HEADER
-// ══════════════════════════════════════════
-(function initHeader(){
-  const d=TODAY.getDay();
-  const badge=$('dayBadge');
-  badge.textContent=dayShort[d];
-  if(d===0){badge.className='app-day-badge day-cook';}
-  else if(d===5){badge.className='app-day-badge day-delivery';}
-  else{badge.className='app-day-badge day-normal';}
-  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  $('dateLabel').textContent=TODAY.getDate()+' '+months[TODAY.getMonth()];
-  $('todayDayName').textContent=days[d];
-  const phases={
+// ══════════════════════════════════════════════════════
+const NOW = new Date();
+const TODAY_DOW = NOW.getDay();
+
+(function initHeader() {
+  const dayBadge = $('dayBadge');
+  dayBadge.textContent = dayShort[TODAY_DOW];
+  if (TODAY_DOW === 0) dayBadge.className = 'app-day-badge day-cook';
+  else if (TODAY_DOW === 5) dayBadge.className = 'app-day-badge day-delivery';
+  else dayBadge.className = 'app-day-badge day-normal';
+
+  $('dateLabel').textContent = NOW.getDate() + ' ' + monthNames[NOW.getMonth()];
+  $('todayDayName').textContent = days[TODAY_DOW];
+
+  const phases = {
     0:'🍳 Cook Day — Sunday. Shop 6–9 AM, Session 1 tonight.',
     1:'🥩 Chicken Day 1 (Mon–Thu). Assembly only.',
     2:'🐟 Fish Day — Buy tilapia fresh today.',
@@ -1205,277 +1323,219 @@ const TODAY_KEY = dateKey(TODAY);
     5:'📦 Delivery Day — Session 2 tonight. Organs go in C-3.',
     6:'🥩 Beef Day 2 (Fri–Mon). Flex day.'
   };
-  $('todayPhase').textContent=phases[d];
-  const tonightActions={
+  $('todayPhase').textContent = phases[TODAY_DOW];
+
+  const tonightActions = {
     0:'Run Cook Session A: chicken + eggs + broth. 8 min active, 35 min total. Soak 80g chickpeas in C-5.',
     1:'Refill C-5 with 80g chickpeas. Drink bone broth before sleep. Confirm Tuesday tilapia shop.',
     2:'Buy tilapia 200g fresh. Boil 12 min, save broth. Refill C-5. Broth before sleep.',
     3:'Optional: Dal Bomb if you want hot food. Refill C-5. Check C-1 chicken (day 3 — smell first).',
-    4:'WhatsApp vendor: confirm Friday delivery (beef 400g + liver 150g + heart 150g + bones 300g). Refill C-5.',
-    5:'As soon as delivery arrives: FRIDGE immediately. Run Cook Session B: beef + organs + broth. Eat organs by Monday.',
-    6:'Enjoy beef day. If eating out tonight, eat Meal 1 at home first. Refill C-5 soak. Broth before sleep.'
+    4:'WhatsApp vendor: confirm Friday delivery. Refill C-5.',
+    5:'Delivery arrives: FRIDGE immediately. Run Cook Session B: beef + organs + broth.',
+    6:'Enjoy beef day. If eating out tonight, eat Meal 1 at home first. Refill C-5 soak.'
   };
-  $('tonightText').textContent=tonightActions[d];
+  $('tonightText').textContent = tonightActions[TODAY_DOW];
 })();
 
-// ══════════════════════════════════════════
-// TAB SWITCHING
-// ══════════════════════════════════════════
-function switchTab(id){
-  const tabIds=['today','shop','cook','meals','calendar','guide'];
-  document.querySelectorAll('.tab').forEach((t,i)=>{
-    t.classList.toggle('active',tabIds[i]===id);
+// ══════════════════════════════════════════════════════
+// CHANGE 2: TAB SWITCHING (bottom nav)
+// ══════════════════════════════════════════════════════
+const TAB_IDS = ['today','shop','cook','meals','calendar','guide'];
+
+function switchTab(id) {
+  TAB_IDS.forEach(tid => {
+    const tab = $('tab-' + tid);
+    const page = $('page-' + tid);
+    if (tab) tab.classList.toggle('active', tid === id);
+    if (page) page.classList.toggle('active', tid === id);
   });
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  $('page-'+id).classList.add('active');
-  if(id==='calendar') renderCalView();
+  if (id === 'calendar') renderCalView();
 }
 
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // PROTEIN TRACKER
-// ══════════════════════════════════════════
-const PT_KEY='pt_'+TODAY.toDateString();
-let ptGrams=ls(PT_KEY,'0');
+// ══════════════════════════════════════════════════════
+const PT_KEY = 'pt_' + dateKey(NOW);
+let ptGrams = ls(PT_KEY, '0');
 
-function renderPt(){
-  $('ptCurrent').textContent=ptGrams;
-  const pct=Math.min(100,Math.round((ptGrams/155)*100));
-  const ring=$('ptRing');
-  if(ring){
-    ring.style.strokeDashoffset=264*(1-pct/100);
-    ring.style.stroke=pct>=100?'#1B6040':'#2D8A58';
+function renderPt() {
+  $('ptCurrent').textContent = ptGrams;
+  const pct = Math.min(100, Math.round((ptGrams / 155) * 100));
+  const ring = $('ptRing');
+  if (ring) {
+    ring.style.strokeDashoffset = 264 * (1 - pct / 100);
+    ring.style.stroke = pct >= 100 ? '#1B6040' : '#2D8A58';
   }
-  $('ptPct').textContent=pct+'% of goal'+(pct>=100?' 🎉':'');
-  saveDailyRecord();
+  const pctEl = $('ptPct');
+  if (pctEl) pctEl.textContent = pct + '% of goal' + (pct >= 100 ? ' 🎉' : '');
 }
-function addProtein(g){ptGrams=Math.round(ptGrams+g);lsSet(PT_KEY,ptGrams);renderPt();showToast('+'+g+'g → '+ptGrams+'g total');}
-function resetProtein(){ptGrams=0;lsSet(PT_KEY,0);renderPt();showToast('Reset to 0g');}
+function addProtein(g) { ptGrams = Math.round(ptGrams + g); lsSet(PT_KEY, ptGrams); renderPt(); showToast('+' + g + 'g → ' + ptGrams + 'g total'); }
+function resetProtein() { ptGrams = 0; lsSet(PT_KEY, 0); renderPt(); showToast('Reset to 0g'); }
 renderPt();
 
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // DAILY CHECKLIST
-// ══════════════════════════════════════════
-const DAILY_ITEMS=[
-  {id:'dc1',text:'15–20 min morning sun',sub:'Within 30 min of waking. Free Vit D + circadian clock set.'},
-  {id:'dc2',text:'500ml salted water on waking',sub:'Before food, before coffee.'},
-  {id:'dc3',text:'Drain + refill C-5 (chickpea soak)',sub:'30 seconds. Every night. Non-negotiable.'},
-  {id:'dc4',text:'Meal 1 assembled',sub:'4 eggs + chickpeas + peanuts + banana + lemon + kalonji milk'},
-  {id:'dc5',text:'Lemon squeezed on Meal 1',sub:'AFTER serving. Never during cooking.'},
-  {id:'dc6',text:'Meal 2 assembled',sub:'220–250g meat + 2 eggs + chickpeas + broth'},
-  {id:'dc7',text:'Lemon squeezed on Meal 2',sub:'Plus ½ tsp mustard oil cold drizzle.'},
-  {id:'dc8',text:'3L salted water consumed',sub:'Spread throughout day.'},
-  {id:'dc9',text:'1 cup bone broth before sleep',sub:'Glycine → lowers core body temp → sleep onset trigger.'},
-  {id:'dc10',text:'Nightly chickpea soak (80g in C-5)',sub:'Tonight\'s soak = tomorrow\'s Meal 1.'},
+// ══════════════════════════════════════════════════════
+const DAILY_ITEMS = [
+  { id:'dc1', text:'15–20 min morning sun', sub:'Within 30 min of waking. Free Vit D + circadian clock set.' },
+  { id:'dc2', text:'500ml salted water on waking', sub:'Before food, before coffee.' },
+  { id:'dc3', text:'Drain + refill C-5 (chickpea soak)', sub:'30 seconds. Every night. Non-negotiable.' },
+  { id:'dc4', text:'Meal 1 assembled', sub:'4 eggs + chickpeas + peanuts + banana + lemon + kalonji milk' },
+  { id:'dc5', text:'Lemon squeezed on Meal 1', sub:'AFTER serving. Never during cooking.' },
+  { id:'dc6', text:'Meal 2 assembled', sub:'220–250g meat + 2 eggs + chickpeas + broth' },
+  { id:'dc7', text:'Lemon squeezed on Meal 2', sub:'Plus ½ tsp mustard oil cold drizzle.' },
+  { id:'dc8', text:'3L salted water consumed', sub:'Spread throughout day.' },
+  { id:'dc9', text:'1 cup bone broth before sleep', sub:'Glycine → lowers core body temp → sleep onset trigger.' },
+  { id:'dc10', text:'Nightly chickpea soak (80g in C-5)', sub:'Tonight\'s soak = tomorrow\'s Meal 1.' },
 ];
-const DC_KEY='dc_'+TODAY.toDateString();
-let dcState=ls(DC_KEY,'{}');
+const DC_KEY = 'dc_' + dateKey(NOW);
+let dcState = ls(DC_KEY, '{}');
 
-function renderDailyChecklist(){
-  $('dailyChecklist').innerHTML=DAILY_ITEMS.map(item=>`
-    <div class="chk-item ${dcState[item.id]?'done':''}" onclick="toggleDailyChk('${item.id}')">
+function renderDailyChecklist() {
+  const container = $('dailyChecklist');
+  container.innerHTML = DAILY_ITEMS.map(item => `
+    <div class="chk-item ${dcState[item.id] ? 'done' : ''}" onclick="toggleDailyChk('${item.id}')">
       <div class="chk-box"><span class="chk-mark">✓</span></div>
-      <div><div class="chk-text">${item.text}</div><div class="chk-sub">${item.sub}</div></div>
-    </div>`).join('');
+      <div>
+        <div class="chk-text">${item.text}</div>
+        <div class="chk-sub">${item.sub}</div>
+      </div>
+    </div>
+  `).join('');
 }
-function toggleDailyChk(id){
-  dcState[id]=!dcState[id];
-  lsSet(DC_KEY,dcState);
+function toggleDailyChk(id) {
+  dcState[id] = !dcState[id];
+  lsSet(DC_KEY, dcState);
   renderDailyChecklist();
-  saveDailyRecord();
-  const done=Object.values(dcState).filter(Boolean).length;
-  if(done===DAILY_ITEMS.length) showToast('🎉 All done for today!');
+  const done = Object.values(dcState).filter(Boolean).length;
+  if (done === DAILY_ITEMS.length) showToast('🎉 All done for today!');
 }
 renderDailyChecklist();
 
-// ══════════════════════════════════════════
-// SAVE DAILY RECORD (for calendar)
-// ══════════════════════════════════════════
-function saveDailyRecord(){
-  const proteinG=ptGrams;
-  const checklistDone=Object.values(dcState).filter(Boolean).length;
-  const record={protein:proteinG,checklistDone,checklistTotal:DAILY_ITEMS.length,ts:Date.now()};
-  lsSet('rec_'+TODAY_KEY,record);
-}
-
-function getRecord(dateStr){
-  // dateStr = YYYY-MM-DD
-  const rec=ls('rec_'+dateStr,'null');
-  if(rec) return rec;
-  // Also try legacy toDateString keys
-  return null;
-}
-
-function getDayStatus(dateStr){
-  // Returns: 'hit' (protein >= 155 AND checklist >= 80%), 'partial', 'miss', 'no-data', 'future'
-  const now=new Date(); const d=new Date(dateStr+'T12:00:00');
-  if(d>now) return 'future';
-  const rec=getRecord(dateStr);
-  if(!rec) return 'no-data';
-  const proteinHit=rec.protein>=155;
-  const checklistHit=rec.checklistDone/rec.checklistTotal>=0.8;
-  if(proteinHit&&checklistHit) return 'hit';
-  if(proteinHit||checklistHit) return 'partial';
-  return 'miss';
-}
-
-// ══════════════════════════════════════════
-// SHOP DATA
-// ══════════════════════════════════════════
-const SHOP_GROUPS=[
-  {title:'🥩 Proteins — Butcher + Fish',items:[
+// ══════════════════════════════════════════════════════
+// SHOP
+// ══════════════════════════════════════════════════════
+const SHOP_GROUPS = [
+  { title:'🥩 Proteins — Butcher + Fish', items:[
     {id:'s1',name:'Chicken Breast',bn:'"রান-এর বুক, বনলেস, স্কিন ছাড়া"',qty:'700g'},
     {id:'s2',name:'Tilapia Fish',bn:'"তেলাপিয়া মাছ, কাটা করে দেন" · Buy Tue+Thu FRESH only',qty:'200g × 2'},
     {id:'s3',name:'Beef Liver (if no vendor)',bn:'"মুরগির কলিজা" · MAX 150g/week',qty:'150g'},
   ]},
-  {title:'🥚 Eggs',items:[
+  { title:'🥚 Eggs', items:[
     {id:'s4',name:'Farm Chicken Eggs',bn:'"দেশি মুরগির ডিম"',qty:'20 pcs'},
-    {id:'s5',name:'Duck Eggs',bn:'"হাঁসের ডিম আছে?"',qty:'14–28 pcs'},
+    {id:'s5',name:'Duck Eggs',bn:'"হাঁসের ডিম আছে?" · Buy whenever available.',qty:'14–28 pcs'},
   ]},
-  {title:'🫘 Dry Goods — Rear Dal Section',items:[
+  { title:'🫘 Dry Goods', items:[
     {id:'s6',name:'Masoor Dal',bn:'মসুর ডাল',qty:'500g'},
     {id:'s7',name:'Dried Chickpeas',bn:'শুকনো ছোলা',qty:'500g'},
-    {id:'s8',name:'Mung Beans',bn:'মুগ ডাল — for sprouting',qty:'300g'},
+    {id:'s8',name:'Mung Beans',bn:'মুগ ডাল · For sprouting only',qty:'300g'},
     {id:'s9',name:'Raw Peanuts',bn:'কাঁচা চিনাবাদাম',qty:'250g'},
     {id:'s10',name:'Almonds',bn:'বাদাম',qty:'100g'},
-    {id:'s11',name:'Soya Chunks',bn:'সয়া চাঙ্ক — 52g protein/100g',qty:'500g'},
+    {id:'s11',name:'Soya Chunks',bn:'সয়া চাঙ্ক · 52g protein/100g dry.',qty:'500g'},
   ]},
-  {title:'🌿 Produce + Fruit',items:[
+  { title:'🌿 Produce + Fruit', items:[
     {id:'s12',name:'Pui Shak / Lal Shak',bn:'পুঁই শাক / লাল শাক',qty:'3 bunches'},
-    {id:'s13',name:'Bananas',bn:'কলা',qty:'14 pcs'},
+    {id:'s13',name:'Bananas',bn:'কলা',qty:'14 pcs (1 bunch)'},
     {id:'s14',name:'Dates',bn:'খেজুর',qty:'200g'},
-    {id:'s15',name:'Lemons',bn:'লেবু — 1 per meal, non-negotiable',qty:'14 pcs'},
-    {id:'s16',name:'Garlic',bn:'রসুন — crush, wait 5 min, then cook',qty:'2 heads'},
-    {id:'s17',name:'Fresh Ginger',bn:'আদা — mandatory for beef',qty:'100g'},
-    {id:'s18',name:'Sweet Potato',bn:'মিষ্টি আলু — GI 44',qty:'300g'},
+    {id:'s15',name:'Lemons',bn:'লেবু · 1 per meal — NON-NEGOTIABLE',qty:'14 pcs'},
+    {id:'s16',name:'Garlic',bn:'রসুন · Crush, wait 5 min, then cook',qty:'2 heads'},
+    {id:'s17',name:'Fresh Ginger',bn:'আদা · Mandatory for beef',qty:'100g'},
+    {id:'s18',name:'Sweet Potato',bn:'মিষ্টি আলু · GI 44. Replaces rice.',qty:'300g'},
   ]},
-  {title:'🥛 Dairy + Pantry',items:[
+  { title:'🥛 Dairy + Pantry', items:[
     {id:'s19',name:'UHT Milk 500ml packs',bn:'Aarong / MilkVita',qty:'7 packs'},
     {id:'s20',name:'Kalonji (Black Seeds)',bn:'কালোজিরা',qty:'200g'},
-    {id:'s21',name:'Mustard Oil',bn:'সরিষার তেল — cold drizzle ONLY',qty:'500ml'},
+    {id:'s21',name:'Mustard Oil',bn:'সরিষার তেল · Cold drizzle ONLY.',qty:'500ml'},
   ]},
-  {title:'🧂 Spice Blend — Monthly Mix',items:[
+  { title:'🧂 Spice Blend — Monthly Mix', items:[
     {id:'s22',name:'Cumin + Coriander Powder',bn:'জিরা গুঁড়া + ধনে গুঁড়া',qty:'100g each'},
     {id:'s23',name:'Turmeric + Chili Powder',bn:'হলুদ + মরিচ গুঁড়া',qty:'100g each'},
     {id:'s24',name:'Garlic + Ginger Powder',bn:'রসুন গুঁড়া + আদা গুঁড়া',qty:'100g each'},
-    {id:'s25',name:'Black Pepper',bn:'গোল মরিচ — always with turmeric',qty:'50g'},
+    {id:'s25',name:'Black Pepper',bn:'গোল মরিচ · Always with turmeric',qty:'50g'},
   ]},
 ];
-const TOTAL_SHOP=SHOP_GROUPS.reduce((a,g)=>a+g.items.length,0);
-let shopState=ls('shopState2025','{}');
+const TOTAL_SHOP = SHOP_GROUPS.reduce((a, g) => a + g.items.length, 0);
+let shopState = ls('shopState2025', '{}');
 
-function renderShop(){
-  let html='';
-  SHOP_GROUPS.forEach(g=>{
-    html+=`<div class="shop-group-hd">${g.title}</div>`;
-    g.items.forEach(item=>{
-      const done=shopState[item.id];
-      html+=`<div class="shop-item ${done?'done':''}" onclick="toggleShop('${item.id}')">
+function renderShop() {
+  let html = '';
+  SHOP_GROUPS.forEach(g => {
+    html += `<div class="shop-group-hd">${g.title}</div>`;
+    g.items.forEach(item => {
+      const done = shopState[item.id];
+      html += `<div class="shop-item ${done ? 'done' : ''}" onclick="toggleShop('${item.id}')">
         <div class="shop-chk"><span class="shop-chk-mk">✓</span></div>
         <div class="shop-body"><div class="shop-name">${item.name}</div><div class="shop-bn">${item.bn}</div></div>
         <span class="shop-qty">${item.qty}</span>
       </div>`;
     });
   });
-  $('shopListHTML').innerHTML=html;
-  updateShopProgress();
+  $('shopListHTML').innerHTML = html;
+  const done = Object.values(shopState).filter(Boolean).length;
+  const pct = Math.round((done / TOTAL_SHOP) * 100);
+  $('shopProg').style.width = pct + '%';
+  $('shopProgLabel').textContent = done + ' of ' + TOTAL_SHOP + ' items (' + pct + '%)';
 }
-function toggleShop(id){shopState[id]=!shopState[id];lsSet('shopState2025',shopState);renderShop();if(shopState[id])showToast('✓ Got it!');}
-function resetShop(){if(!confirm('Clear all shopping checks?'))return;shopState={};lsSet('shopState2025',shopState);renderShop();}
-function updateShopProgress(){
-  const done=Object.values(shopState).filter(Boolean).length;
-  const pct=Math.round((done/TOTAL_SHOP)*100);
-  $('shopProg').style.width=pct+'%';
-  $('shopProgLabel').textContent=done+' of '+TOTAL_SHOP+' items ('+pct+'%)';
-}
-function copyVendorMsg(){
-  const msg='ভাই, শুক্রবার টপসাইড লিন বিফ ৪০০গ্রাম, কলিজা ১৫০গ্রাম, হার্ট ১৫০গ্রাম, নলার হাড্ডি ৩০০গ্রাম দরকার। আগামীকাল ডেলিভারি হবে কি?';
-  if(navigator.clipboard){navigator.clipboard.writeText(msg).then(()=>showToast('Vendor message copied! 📋'));}
-  else{showToast('Long-press and copy the message above');}
+function toggleShop(id) { shopState[id] = !shopState[id]; lsSet('shopState2025', shopState); renderShop(); if(shopState[id]) showToast('✓ Got it!'); }
+function resetShop() { if(!confirm('Clear all shopping checks?')) return; shopState={}; lsSet('shopState2025', shopState); renderShop(); }
+function copyVendorMsg() {
+  const msg = 'ভাই, শুক্রবার টপসাইড লিন বিফ ৪০০গ্রাম, কলিজা ১৫০গ্রাম, হার্ট ১৫০গ্রাম, নলার হাড্ডি ৩০০গ্রাম দরকার। আগামীকাল ডেলিভারি হবে কি?';
+  if (navigator.clipboard) navigator.clipboard.writeText(msg).then(() => showToast('Vendor message copied! 📋'));
+  else showToast('Long-press and copy the message above');
 }
 renderShop();
 
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // COOK
-// ══════════════════════════════════════════
-const SESSIONS={
-  A:{steps:[
-    {title:'Build Spice Water',badge:'active',badgeTxt:'2 MIN ACTIVE',
-      desc:'Fill pot ¾ with water. Add: 2 tsp master blend + 4 garlic cloves (crush, wait 5 min, then add) + 1 tsp kalonji + 1 tsp salt + ½ tsp black pepper. Turn induction to HIGH.',
-      note:'Garlic: crush first, wait 5 minutes, then add. This activates allicin.',noteType:'',timer:null},
-    {title:'Egg-Marinate Chicken',badge:'active',badgeTxt:'3 MIN ACTIVE',
-      desc:'In a bowl: beat 2 eggs + ½ tsp master blend + ½ tsp mustard oil + pinch chili. Coat 500g chicken breast pieces completely. Rest 5 minutes.',
-      note:'The egg coating seals moisture the instant chicken hits boiling water.',noteType:'',timer:null},
-    {title:'Load the Pot',badge:'active',badgeTxt:'1 MIN ACTIVE',
-      desc:'Add marinated chicken to boiling water. Lower 10–12 eggs gently with a spoon. Set timer.',
-      note:null,timer:null},
-    {title:'PASSIVE — 12 Minutes',badge:'passive',badgeTxt:'12 MIN PASSIVE',
-      desc:'Walk away completely. Study, shower, anything. Do not stir.',
-      note:null,timer:12*60},
-    {title:'Remove Eggs',badge:'active',badgeTxt:'1 MIN ACTIVE',
-      desc:'Remove eggs with a spoon into cold water. Set 15-minute timer for chicken.',
-      note:null,timer:null},
-    {title:'PASSIVE — 15 Minutes',badge:'passive',badgeTxt:'15 MIN PASSIVE',
-      desc:'Passive again. Chicken finishes. Leave it.',
-      note:null,timer:15*60},
-    {title:'Extract + Store',badge:'fin',badgeTxt:'4 MIN · DONE',
-      desc:'Chicken → shred/slice → C-1. Drop pui shak into hot broth 2 min. Strain ALL broth → C-4. Peel eggs → C-2. Into fridge within 20 min.',
-      note:'Never pour broth away. Fridge within 20 min — Dhaka heat.',noteType:'g',
-      alarmMsg:'✅ Session A Complete! Mon–Thu covered.',alarmSub:'Fridge everything within 20 min.',timer:null}
+// ══════════════════════════════════════════════════════
+const SESSIONS = {
+  A: { steps: [
+    {title:'Build Spice Water',badge:'active',badgeTxt:'2 MIN ACTIVE',desc:'Fill pot ¾ with water. Add: 2 tsp master blend + 4 garlic cloves (crush, wait 5 min, then add) + 1 tsp kalonji + 1 tsp salt + ½ tsp black pepper. Turn induction to HIGH.',note:'Garlic: crush first, wait 5 minutes, then add. This activates allicin. Do not skip the wait.',noteType:'',timer:null},
+    {title:'Egg-Marinate Chicken',badge:'active',badgeTxt:'3 MIN ACTIVE',desc:'In a bowl: beat 2 eggs + ½ tsp master blend + ½ tsp mustard oil + pinch chili. Coat 500g chicken breast pieces completely.',note:'The egg coating seals moisture. This is what stops it tasting like hospital food.',noteType:'',timer:null},
+    {title:'Load the Pot',badge:'active',badgeTxt:'1 MIN ACTIVE',desc:'Add marinated chicken to boiling water. Lower 10–12 eggs gently with a spoon.',note:null,timer:null},
+    {title:'PASSIVE — 12 Minutes',badge:'passive',badgeTxt:'12 MIN PASSIVE',desc:'Walk away completely. Study, shower, anything. Do not stir.',note:null,timer:12*60},
+    {title:'Remove Eggs',badge:'active',badgeTxt:'1 MIN ACTIVE',desc:'Remove eggs with a spoon into cold water. Set 15-minute timer for chicken.',note:null,timer:null},
+    {title:'PASSIVE — 15 Minutes',badge:'passive',badgeTxt:'15 MIN PASSIVE',desc:'Passive again. Chicken finishes.',note:null,timer:15*60},
+    {title:'Extract + Store',badge:'fin',badgeTxt:'4 MIN · DONE',desc:'Chicken → shred → C-1. Drop pui shak into hot broth 2 min. Strain broth → C-4. Peel eggs → C-2. Into fridge within 20 min.',note:'Never pour broth away. Fridge within 20 min — Dhaka heat.',noteType:'g',alarmMsg:'✅ Session A Complete!',alarmSub:'Fridge everything within 20 min.',timer:null}
   ]},
-  B:{steps:[
-    {title:'Liver Soak — Start Now',badge:'active',badgeTxt:'2 MIN ACTIVE',
-      desc:'Slice liver into 2cm pieces. Submerge in cold water + 1 tsp salt. Set 20-min timer. Heart: slice 2cm cubes. No soak.',
-      note:'The soak removes metallic edge. Do not skip.',noteType:'',timer:20*60},
-    {title:'Build Beef Spice Water',badge:'active',badgeTxt:'2 MIN ACTIVE',
-      desc:'Fill pot ¾. Add: 2 tsp master blend + 5 crushed garlic + 1 thumb fresh ginger sliced (MANDATORY) + 1 tsp kalonji + marrow bones. HIGH heat.',
-      note:'Ginger is non-negotiable for beef.',noteType:'',timer:null},
-    {title:'Egg-Marinate Beef',badge:'active',badgeTxt:'2 MIN ACTIVE',
-      desc:'Beat 1 egg + ½ tsp blend + ½ tsp ginger powder + ½ tsp mustard oil + pinch chili. Coat beef. Rest 5 min.',
-      note:null,timer:null},
-    {title:'Beef Goes In First',badge:'active',badgeTxt:'1 MIN + 8 MIN PASSIVE',
-      desc:'Beef needs 20 min total. Add beef to boiling spice water. Start 8-minute timer.',
-      note:'Beef goes in alone first. Organs and eggs added 8 minutes later.',noteType:'',timer:8*60},
-    {title:'Add Organs + Eggs',badge:'active',badgeTxt:'1 MIN ACTIVE',
-      desc:'Add drained liver + heart cubes to pot. Lower 8–10 eggs gently. Set timer 12 min.',
-      note:'Liver and heart only need 12 min.',noteType:'',timer:12*60},
-    {title:'Extract + Store',badge:'fin',badgeTxt:'3 MIN · DONE',
-      desc:'Beef → C-1. Organs → C-3 (⚠️ eat by Monday). Eggs → cold water → peel → C-2. All broth → C-4. Into fridge within 20 min.',
-      note:'⚠️ Organs into fridge immediately. C-3 consumed by Monday.',noteType:'r',
-      alarmMsg:'✅ Session B Complete! Fri–Mon covered.',alarmSub:'⚠️ Eat organs from C-3 by Monday.',timer:null}
+  B: { steps: [
+    {title:'Liver Soak — Start Now',badge:'active',badgeTxt:'2 MIN ACTIVE',desc:'Slice liver into 2cm pieces. Submerge in cold water + 1 tsp salt. Set 20-minute timer. Heart: slice into 2cm cubes. No soak needed.',note:'The soak removes the metallic edge.',noteType:'',timer:20*60},
+    {title:'Build Beef Spice Water',badge:'active',badgeTxt:'2 MIN ACTIVE',desc:'Fill pot ¾. Add: 2 tsp master blend + 5 crushed garlic + 1 thumb fresh ginger (MANDATORY) + 1 tsp kalonji + marrow bones. HIGH heat.',note:'Ginger is non-negotiable for beef.',noteType:'',timer:null},
+    {title:'Egg-Marinate Beef',badge:'active',badgeTxt:'2 MIN ACTIVE',desc:'Beat 1 egg + ½ tsp master blend + ½ tsp ginger powder + ½ tsp mustard oil + pinch chili. Coat beef pieces.',note:null,timer:null},
+    {title:'Beef Goes In First',badge:'active',badgeTxt:'1 MIN + 8 MIN PASSIVE',desc:'Add beef to boiling spice water. Start 8-minute timer.',note:'Beef goes in alone first.',noteType:'',timer:8*60},
+    {title:'Add Organs + Eggs',badge:'active',badgeTxt:'1 MIN ACTIVE',desc:'Add drained liver + heart cubes. Lower 8–10 eggs gently. Set timer 12 min.',note:'Liver and heart only need 12 min.',noteType:'',timer:12*60},
+    {title:'Extract + Store',badge:'fin',badgeTxt:'3 MIN · DONE',desc:'Beef → C-1. Organs → C-3 (⚠️ eat by Monday). Eggs → cold water → peel → C-2. ALL broth → C-4 bottles. Into fridge within 20 min.',note:'⚠️ Organs into fridge immediately. C-3 consumed by Monday. 3-day hard limit.',noteType:'r',alarmMsg:'✅ Session B Complete!',alarmSub:'⚠️ Eat organs from C-3 by Monday.',timer:null}
   ]}
 };
+let currentSession = 'A';
+let cookState = {};
+let timers = {};
 
-let currentSession='A';
-let cookState={};
-let timers={};
-
-function selectSession(s){
-  currentSession=s;
-  $('sess-btn-A').classList.toggle('active',s==='A');
-  $('sess-btn-B').classList.toggle('active',s==='B');
-  cookState=ls('cook_'+s,'{}');
+function selectSession(s) {
+  currentSession = s;
+  $('sess-btn-A').classList.toggle('active', s==='A');
+  $('sess-btn-B').classList.toggle('active', s==='B');
+  cookState = ls('cook_' + s, '{}');
   renderCookSteps();
 }
-function renderCookSteps(){
-  const sess=SESSIONS[currentSession];
-  cookState=ls('cook_'+currentSession,'{}');
-  const container=$('cookStepContainer');
-  let html='';
-  sess.steps.forEach((step,i)=>{
-    const isDone=cookState[i]==='done';
-    const isOpen=cookState[i]==='open';
-    const cls=isDone?'done-s':(isOpen?'active-s open':'');
-    const bdgCls=step.badge==='passive'?'bdg-pas':step.badge==='fin'?'bdg-fin':'bdg-act';
-    const noteHtml=step.note?`<div class="step-note ${step.noteType==='g'?'g':step.noteType==='r'?'r':''}">${step.note}</div>`:'';
-    const timerHtml=step.timer?`
+function renderCookSteps() {
+  cookState = ls('cook_' + currentSession, '{}');
+  const container = $('cookStepContainer');
+  let html = '';
+  SESSIONS[currentSession].steps.forEach((step, i) => {
+    const isDone = cookState[i] === 'done';
+    const isOpen = cookState[i] === 'open';
+    const cls = isDone ? 'done-s' : (isOpen ? 'active-s open' : '');
+    const bdgCls = step.badge === 'passive' ? 'bdg-pas' : step.badge === 'fin' ? 'bdg-fin' : 'bdg-act';
+    const noteHtml = step.note ? `<div class="step-note ${step.noteType==='g'?'g':step.noteType==='r'?'r':''}">${step.note}</div>` : '';
+    const timerHtml = step.timer ? `
       <div class="timer-box">
         <div class="timer-lbl">COUNTDOWN TIMER</div>
         <div class="timer-ring-wrap">
           <svg class="timer-ring-svg" width="110" height="110" viewBox="0 0 110 110">
             <circle class="timer-ring-bg" cx="55" cy="55" r="46"/>
             <circle class="timer-ring-fill" id="tp_${currentSession}_${i}" cx="55" cy="55" r="46"
-              stroke-dasharray="289" stroke-dashoffset="0"
-              style="transform-origin:55px 55px;transform:rotate(-90deg);transition:stroke-dashoffset 1s linear;"/>
+              stroke-dasharray="289" stroke-dashoffset="0" style="transform-origin:55px 55px;transform:rotate(-90deg);"/>
           </svg>
           <div class="timer-center"><div class="timer-disp" id="td_${currentSession}_${i}">${fmt(step.timer)}</div></div>
         </div>
@@ -1483,10 +1543,10 @@ function renderCookSteps(){
           <button class="t-btn t-start" onclick="startTimer(${i},${step.timer})">▶ START</button>
           <button class="t-btn t-reset" onclick="resetTimer(${i},${step.timer})">↺ RESET</button>
         </div>
-      </div>`:'';
-    html+=`<div class="cook-step ${cls}" id="cs_${i}">
+      </div>` : '';
+    html += `<div class="cook-step ${cls}" id="cs_${i}">
       <div class="step-hd" onclick="toggleStep(${i})">
-        <div class="step-num">${isDone?'✓':i+1}</div>
+        <div class="step-num">${isDone ? '✓' : i+1}</div>
         <div class="step-ttl">${step.title}</div>
         <span class="step-bdg ${bdgCls}">${step.badgeTxt}</span>
       </div>
@@ -1499,80 +1559,77 @@ function renderCookSteps(){
       </div>
     </div>`;
   });
-  container.innerHTML=html;
-  updateCookProg();
+  container.innerHTML = html;
+  const total = SESSIONS[currentSession].steps.length;
+  const done = SESSIONS[currentSession].steps.filter((_,i) => cookState[i]==='done').length;
+  $('cookProgText').textContent = done + ' of ' + total + ' steps complete';
 }
-function toggleStep(i){
-  if(cookState[i]==='done') return;
-  cookState[i]=cookState[i]==='open'?undefined:'open';
-  if(!cookState[i]) delete cookState[i];
-  lsSet('cook_'+currentSession,cookState);
+function toggleStep(i) {
+  if (cookState[i] === 'done') return;
+  cookState[i] = cookState[i] === 'open' ? undefined : 'open';
+  if (!cookState[i]) delete cookState[i];
+  lsSet('cook_' + currentSession, cookState);
   renderCookSteps();
 }
-function markStep(i,done){
-  cookState[i]=done?'done':'open';
-  lsSet('cook_'+currentSession,cookState);
-  if(done){
-    showToast('Step '+(i+1)+' done ✓');
-    const step=SESSIONS[currentSession].steps[i];
-    if(i===SESSIONS[currentSession].steps.length-1&&step.alarmMsg){
-      setTimeout(()=>showAlarm(step.alarmMsg,step.alarmSub),400);
+function markStep(i, done) {
+  cookState[i] = done ? 'done' : 'open';
+  lsSet('cook_' + currentSession, cookState);
+  if (done) {
+    showToast('Step ' + (i+1) + ' done ✓');
+    const step = SESSIONS[currentSession].steps[i];
+    if (i === SESSIONS[currentSession].steps.length - 1 && step.alarmMsg) {
+      setTimeout(() => showAlarm(step.alarmMsg, step.alarmSub), 400);
     }
   }
   renderCookSteps();
 }
-function updateCookProg(){
-  const total=SESSIONS[currentSession].steps.length;
-  const done=SESSIONS[currentSession].steps.filter((_,i)=>cookState[i]==='done').length;
-  $('cookProgText').textContent=done+' of '+total+' steps complete';
-}
-function resetCook(){
-  if(!confirm('Reset all steps for this session?')) return;
-  Object.keys(timers).forEach(k=>{clearInterval(timers[k].interval);});
-  timers={};cookState={};
-  lsSet('cook_A',{});lsSet('cook_B',{});
+function resetCook() {
+  if (!confirm('Reset all steps?')) return;
+  Object.keys(timers).forEach(k => { clearInterval(timers[k].interval); });
+  timers = {}; cookState = {};
+  lsSet('cook_A', {}); lsSet('cook_B', {});
   renderCookSteps();
 }
-function fmt(s){return(s<0?'00:00':(Math.floor(s/60)<10?'0':'')+Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60);}
-function startTimer(idx,total){
-  const key=currentSession+'_'+idx;
-  if(timers[key]&&timers[key].running) return;
-  if(!timers[key]) timers[key]={rem:total,total,running:false};
-  timers[key].running=true;
-  timers[key].interval=setInterval(()=>{
+function fmt(s) { return (s<0?'00:00':(Math.floor(s/60)<10?'0':'')+Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60); }
+function startTimer(idx, total) {
+  const key = currentSession + '_' + idx;
+  if (timers[key] && timers[key].running) return;
+  if (!timers[key]) timers[key] = { rem: total, total, running: false };
+  timers[key].running = true;
+  timers[key].interval = setInterval(() => {
     timers[key].rem--;
-    const rem=timers[key].rem;
-    const disp=$('td_'+currentSession+'_'+idx);
-    const prog=$('tp_'+currentSession+'_'+idx);
-    if(disp){disp.textContent=fmt(rem);if(rem<=30){disp.classList.add('urgent');if(prog)prog.classList.add('urgent');}}
-    if(prog) prog.style.strokeDashoffset=(289*Math.max(0,rem)/total);
-    if(rem<=0){
-      clearInterval(timers[key].interval);timers[key].running=false;
-      if(disp){disp.textContent='DONE';disp.className='timer-disp done-t';}
-      if(prog){prog.classList.remove('urgent');prog.classList.add('done-t');prog.style.strokeDashoffset='289';}
-      showAlarm('⏱ Timer Done!','Step '+(idx+1)+': '+SESSIONS[currentSession].steps[idx].title);
+    const rem = timers[key].rem;
+    const disp = $('td_' + currentSession + '_' + idx);
+    const prog = $('tp_' + currentSession + '_' + idx);
+    if (disp) { disp.textContent = fmt(rem); if(rem<=30){disp.classList.add('urgent');if(prog)prog.classList.add('urgent');} }
+    if (prog) prog.style.strokeDashoffset = (289 * (1 - Math.max(0,rem)/total));
+    if (rem <= 0) {
+      clearInterval(timers[key].interval); timers[key].running = false;
+      if (disp) { disp.textContent = 'DONE'; disp.className = 'timer-disp done-t'; }
+      if (prog) { prog.classList.remove('urgent'); prog.classList.add('done-t'); prog.style.strokeDashoffset='289'; }
+      showAlarm('⏱ Timer Done!', 'Step ' + (idx+1) + ': ' + SESSIONS[currentSession].steps[idx].title);
     }
-  },1000);
+  }, 1000);
   showToast('Timer started');
 }
-function resetTimer(idx,total){
-  const key=currentSession+'_'+idx;
-  if(timers[key]){clearInterval(timers[key].interval);delete timers[key];}
-  const disp=$('td_'+currentSession+'_'+idx);
-  const prog=$('tp_'+currentSession+'_'+idx);
-  if(disp){disp.textContent=fmt(total);disp.className='timer-disp';}
-  if(prog){prog.style.strokeDashoffset='0';prog.className='timer-ring-fill';}
+function resetTimer(idx, total) {
+  const key = currentSession + '_' + idx;
+  if (timers[key]) { clearInterval(timers[key].interval); delete timers[key]; }
+  const disp = $('td_' + currentSession + '_' + idx);
+  const prog = $('tp_' + currentSession + '_' + idx);
+  if (disp) { disp.textContent = fmt(total); disp.className = 'timer-disp'; }
+  if (prog) { prog.style.strokeDashoffset='0'; prog.className='timer-ring-fill'; }
 }
-cookState=ls('cook_A','{}');
+cookState = ls('cook_A', '{}');
 renderCookSteps();
 
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // MEALS
-// ══════════════════════════════════════════
-const MEALS={
-  1:{
+// ══════════════════════════════════════════════════════
+const MEALS = {
+  1: {
     macros:[{val:'58g',key:'PROTEIN'},{val:'660',key:'CALORIES'},{val:'38g',key:'FAT'},{val:'70g',key:'CARBS'},{val:'~95৳',key:'COST'}],
-    tip:{hd:'WHY THIS TASTES GOOD',body:'Chickpeas + lemon + mustard oil + chili = Bengali chaat. Sweet (banana) + Sour (lemon) + Spicy (chili) + Fatty (peanuts) + Umami (eggs). All five dimensions.'},
+    tip:{hd:'WHY THIS TASTES GOOD',body:'Chickpeas + lemon + mustard oil + chili = classic Bengali chaat formula. Sweet (banana, dates) + Sour (lemon) + Spicy (chili) + Fatty (peanuts, oil) + Umami (eggs, chickpeas). All five taste dimensions.'},
     ingredients:[
       {name:'Soaked chickpeas',from:'C-5 on desk',amt:'100g'},
       {name:'Duck eggs, boiled',from:'C-2 top shelf',amt:'2 whole'},
@@ -1586,24 +1643,24 @@ const MEALS={
       {name:'Mustard oil (cold)',from:'Pantry',amt:'½ tsp COLD'},
     ],
     assembly:[
-      {text:'Open C-5 → 100g chickpeas into bowl. Drain soak water.',sub:'Tails visible = sprouted. Even better.'},
-      {text:'Open C-2 → 2 duck + 2 chicken eggs. Slice over chickpeas.',sub:'Never remove the yolk. Yolk = choline + DHA + Vit D.'},
+      {text:'Open C-5 → 100g chickpeas into bowl. Drain soak water.',sub:'Tails visible after 36h = sprouted. White tails are perfect.'},
+      {text:'Open C-2 → 2 duck + 2 chicken eggs. Slice over chickpeas.',sub:'Never remove the yolk. The yolk = choline + DHA + Vit D.'},
       {text:'Add 40g peanuts + 3 chopped dates + 1 banana alongside.',sub:''},
-      {text:'Squeeze ½ lemon OVER everything. Add salt + chili.',sub:'Lemon AFTER — heat kills Vit C. Triples iron absorption.'},
-      {text:'Drizzle ½ tsp mustard oil cold over chickpeas.',sub:'Never heat mustard oil.'},
-      {text:'Pour 250ml UHT milk in cup. Stir in 1 tsp kalonji. Drink alongside.',sub:'Kalonji in warm milk = anti-inflammatory + gut repair.'},
+      {text:'Squeeze ½ lemon OVER everything. Add salt + chili flakes.',sub:'Lemon AFTER assembly — heat kills Vit C. Triples iron absorption.'},
+      {text:'Drizzle ½ tsp mustard oil cold over chickpeas.',sub:'Heating mustard oil destroys Omega-3 ALA.'},
+      {text:'Pour 250ml UHT milk in cup. Stir in 1 tsp kalonji. Drink alongside.',sub:'Kalonji in warm milk = anti-inflammatory, gut repair.'},
     ]
   },
-  2:{
+  2: {
     macros:[{val:'97g',key:'PROTEIN'},{val:'760',key:'CALORIES'},{val:'34g',key:'FAT'},{val:'42g',key:'CARBS'},{val:'~145৳',key:'COST'}],
-    tip:{hd:'CHICKEN vs BEEF DAY',body:'Chicken (Mon–Thu): lemon + pui shak + chili = clean. Beef (Fri–Mon): richer — extra ginger + more mustard oil. Organ day: replace 100g meat with 50g liver + 75g heart from C-3.'},
+    tip:{hd:'CHICKEN vs BEEF DAY',body:'Chicken (Mon–Thu): lemon + pui shak + chili = clean, bright. Beef (Fri–Mon): richer — extra ginger + more mustard oil drizzle.'},
     ingredients:[
       {name:'Batch chicken or beef',from:'C-1 top shelf',amt:'220–250g'},
       {name:'Duck egg, boiled',from:'C-2 top shelf',amt:'1 whole'},
       {name:'Chicken egg, boiled',from:'C-2 top shelf',amt:'1 whole'},
       {name:'Soaked chickpeas',from:'C-5 on desk',amt:'60g'},
       {name:'Bone broth',from:'C-4 door shelf',amt:'250ml (warm)'},
-      {name:'Pui shak',from:'C-4 bottle',amt:'handful'},
+      {name:'Pui shak (in broth)',from:'C-4 bottle',amt:'handful'},
       {name:'UHT milk',from:'Room temp pack',amt:'250ml'},
       {name:'Almonds',from:'Desk dry store',amt:'20g (after)'},
       {name:'Lemon juice',from:'Fridge bottom',amt:'½ lemon AFTER'},
@@ -1612,361 +1669,451 @@ const MEALS={
     assembly:[
       {text:'Open C-1 → 220–250g meat. Shred beef with fork.',sub:'Beef = Fri–Mon. Chicken = Mon–Thu.'},
       {text:'Open C-2 → 1 duck + 1 chicken egg. Slice over meat.',sub:''},
-      {text:'Open C-5 → 60g chickpeas. Add pui shak from C-4 bottle.',sub:''},
-      {text:'Heat 250ml broth 2–3 min. Pour over or alongside.',sub:'White fat layer = correct. Stir it in — Vit A, D, K + CLA.'},
-      {text:'Squeeze ½ lemon. Drizzle ½ tsp cold mustard oil.',sub:'After serving. Never heat either.'},
-      {text:'Drink 250ml UHT milk. Eat 20g almonds after.',sub:'Vit E + magnesium.'},
+      {text:'Open C-5 → 60g chickpeas alongside. Add pui shak from C-4.',sub:''},
+      {text:'Heat 250ml broth 2–3 min. Pour over or alongside.',sub:'White fat layer = correct, not spoilage. Stir it in.'},
+      {text:'Squeeze ½ lemon over everything. Drizzle ½ tsp cold mustard oil.',sub:'Lemon AFTER serving. Oil cold. Never heat either.'},
+      {text:'Drink 250ml UHT milk. Eat 20g almonds after.',sub:'Vitamin E + magnesium.'},
     ]
   }
 };
-let currentMeal=1;
-let mealState={};
+let currentMeal = 1;
+let mealState = {};
 
-function selectMeal(m){
-  currentMeal=m;
-  $('meal-btn-1').classList.toggle('active',m===1);
-  $('meal-btn-2').classList.toggle('active',m===2);
-  mealState=ls('meal_'+m,'{}');
+function selectMeal(m) {
+  currentMeal = m;
+  $('meal-btn-1').classList.toggle('active', m===1);
+  $('meal-btn-2').classList.toggle('active', m===2);
+  mealState = ls('meal_' + m, '{}');
   renderMeal();
 }
-function renderMeal(){
-  const meal=MEALS[currentMeal];
-  mealState=ls('meal_'+currentMeal,'{}');
-  const macroHtml=`<div class="meal-macros">${meal.macros.map(m=>`<div class="macro"><div class="macro-val">${m.val}</div><div class="macro-key">${m.key}</div></div>`).join('')}</div>`;
-  const tipHtml=`<div class="px20"><div class="meal-tip"><div class="meal-tip-hd">${meal.tip.hd}</div><div class="meal-tip-body">${meal.tip.body}</div></div></div>`;
-  const ingrHtml=`<div class="meal-section"><div class="meal-sec-t">INGREDIENTS</div>${meal.ingredients.map(i=>`<div class="ingr-row"><div><div class="ingr-name">${i.name}</div><div class="ingr-from">${i.from}</div></div><div class="ingr-amt">${i.amt}</div></div>`).join('')}</div>`;
-  const asmHtml=`<div class="meal-section"><div class="meal-sec-t">ASSEMBLY — 5 MINUTES, NO HEAT</div>${meal.assembly.map((s,i)=>`<div class="asm-step ${mealState[i]?'done-a':''}" onclick="toggleMealStep(${i})"><div class="asm-n">${mealState[i]?'✓':i+1}</div><div><div class="asm-text">${s.text}</div>${s.sub?`<div class="asm-sub">${s.sub}</div>`:''}</div></div>`).join('')}</div>`;
-  $('mealPageContent').innerHTML=macroHtml+tipHtml+ingrHtml+asmHtml+`<div class="meal-reset-btn" onclick="resetMeal()">↺ RESET STEPS</div>`;
+function renderMeal() {
+  const meal = MEALS[currentMeal];
+  mealState = ls('meal_' + currentMeal, '{}');
+  const macroHtml = `<div class="meal-macros">${meal.macros.map(m=>`<div class="macro"><div class="macro-val">${m.val}</div><div class="macro-key">${m.key}</div></div>`).join('')}</div>`;
+  const tipHtml = `<div class="px20"><div class="meal-tip"><div class="meal-tip-hd">${meal.tip.hd}</div><div class="meal-tip-body">${meal.tip.body}</div></div></div>`;
+  const ingrHtml = `<div class="meal-section"><div class="meal-sec-t">INGREDIENTS</div>${meal.ingredients.map(i=>`<div class="ingr-row"><div><div class="ingr-name">${i.name}</div><div class="ingr-from">${i.from}</div></div><div class="ingr-amt">${i.amt}</div></div>`).join('')}</div>`;
+  const asmHtml = `<div class="meal-section"><div class="meal-sec-t">ASSEMBLY — 5 MINUTES, NO HEAT</div>${meal.assembly.map((s,i)=>`<div class="asm-step ${mealState[i]?'done-a':''}" onclick="toggleMealStep(${i})"><div class="asm-n">${mealState[i]?'✓':i+1}</div><div><div class="asm-text">${s.text}</div>${s.sub?`<div class="asm-sub">${s.sub}</div>`:''}</div></div>`).join('')}</div>`;
+  $('mealPageContent').innerHTML = macroHtml + tipHtml + ingrHtml + asmHtml + `<div class="meal-reset-btn" onclick="resetMeal()">↺ RESET STEPS</div>`;
 }
-function toggleMealStep(i){mealState[i]=!mealState[i];lsSet('meal_'+currentMeal,mealState);renderMeal();if(mealState[i])showToast('Step '+(i+1)+' done ✓');}
-function resetMeal(){mealState={};lsSet('meal_'+currentMeal,mealState);renderMeal();}
+function toggleMealStep(i) {
+  mealState[i] = !mealState[i];
+  lsSet('meal_' + currentMeal, mealState);
+  renderMeal();
+  if (mealState[i]) showToast('Step ' + (i+1) + ' done ✓');
+}
+function resetMeal() { mealState={}; lsSet('meal_' + currentMeal, mealState); renderMeal(); }
 renderMeal();
 
-// ══════════════════════════════════════════
-// GUIDE ACCORDION
-// ══════════════════════════════════════════
-function toggleAcc(id){
-  const item=$('acc-'+id);
-  item.classList.toggle('open',!item.classList.contains('open'));
+// ══════════════════════════════════════════════════════
+// CHANGE 3: CALENDAR / PROGRESS SYSTEM
+// ══════════════════════════════════════════════════════
+let currentCalView = 'daily';
+let calWeekOffset = 0; // for weekly view navigation
+
+// ── Helpers to read stored data for any date
+function getProteinForDate(d) { return ls('pt_' + dateKey(d), '0') || 0; }
+function getChecklistForDate(d) {
+  const state = ls('dc_' + dateKey(d), '{}') || {};
+  return Object.values(state).filter(Boolean).length;
 }
-function expandAllGuide(){document.querySelectorAll('.acc-item').forEach(el=>el.classList.add('open'));}
+function getDayScore(d) {
+  // 0–100: protein % capped at 100, blended with checklist %
+  const pt = Math.min(100, Math.round((getProteinForDate(d) / 155) * 100));
+  const chk = Math.round((getChecklistForDate(d) / DAILY_ITEMS.length) * 100);
+  return Math.round((pt + chk) / 2);
+}
+function scoreToLevel(score) {
+  if (score === 0) return 0;
+  if (score < 20) return 1;
+  if (score < 40) return 2;
+  if (score < 60) return 3;
+  if (score < 80) return 4;
+  return 5;
+}
 
-// ══════════════════════════════════════════
-// CALENDAR VIEW
-// ══════════════════════════════════════════
-let calView='daily';
-let calWeekOffset=0;
-let calQtrOffset=0;
+// ── Logging: save today's manual log note
+function logTodayManually() {
+  const pt = ptGrams;
+  const chk = Object.values(dcState).filter(Boolean).length;
+  showToast(`✓ Today logged: ${pt}g protein, ${chk}/${DAILY_ITEMS.length} checks`);
+  // Trigger re-render if on calendar
+  if (currentCalView) renderCalView();
+}
 
-function setCalView(v){
-  calView=v;
-  ['daily','weekly','quarterly','yearly'].forEach(id=>{
-    $('cv-'+id).classList.toggle('active',id===v);
+function selectCalView(v) {
+  currentCalView = v;
+  ['daily','weekly','quarterly','yearly'].forEach(id => {
+    $('calv-' + id).classList.toggle('active', id === v);
   });
+  calWeekOffset = 0;
   renderCalView();
 }
 
-function renderCalView(){
-  const container=$('calContent');
-  if(calView==='daily') container.innerHTML=renderDailyView();
-  else if(calView==='weekly') container.innerHTML=renderWeeklyView();
-  else if(calView==='quarterly') container.innerHTML=renderQuarterlyView();
-  else if(calView==='yearly') container.innerHTML=renderYearlyView();
+function renderCalView() {
+  const container = $('calContent');
+  if (!container) return;
+  if (currentCalView === 'daily') container.innerHTML = renderDaily();
+  else if (currentCalView === 'weekly') container.innerHTML = renderWeekly();
+  else if (currentCalView === 'quarterly') container.innerHTML = renderQuarterly();
+  else container.innerHTML = renderYearly();
 }
 
-function renderDailyView(){
-  const rec=getRecord(TODAY_KEY)||{protein:ptGrams,checklistDone:Object.values(dcState).filter(Boolean).length,checklistTotal:10};
-  const proteinPct=Math.min(100,Math.round((rec.protein/155)*100));
-  const checkPct=Math.round((rec.checklistDone/rec.checklistTotal)*100);
-  const status=getDayStatus(TODAY_KEY);
-  const statusMsg={hit:'💚 Goal Met',partial:'🟡 Partial Progress',miss:'🔴 Needs Work','no-data':'📋 Just Started'}[status]||'📋 Today';
-  return `<div class="cal-daily">
-    <div class="cal-day-hero">
-      <div class="cdh-date">${TODAY.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>
-      <div class="cdh-day">${statusMsg}</div>
-      <div class="cdh-sub">Hit protein ≥ 155g + checklist ≥ 80% = Green Day</div>
-    </div>
-    <div class="cal-metrics">
-      <div class="cal-metric">
-        <div class="cm-label">PROTEIN</div>
-        <div class="cm-val">${rec.protein}g</div>
-        <div class="cm-sub">${proteinPct}% of 155g goal</div>
-        <div class="cm-bar"><div class="cm-bar-fill" style="width:${proteinPct}%;background:${proteinPct>=100?'linear-gradient(90deg,var(--forest),var(--green))':'linear-gradient(90deg,var(--gold),var(--gold2))'}"></div></div>
-      </div>
-      <div class="cal-metric">
-        <div class="cm-label">CHECKLIST</div>
-        <div class="cm-val">${rec.checklistDone}/${rec.checklistTotal}</div>
-        <div class="cm-sub">${checkPct}% complete</div>
-        <div class="cm-bar"><div class="cm-bar-fill" style="width:${checkPct}%"></div></div>
-      </div>
-    </div>
-    <div class="cal-checklist-summary">
-      <div class="cls-head">
-        <div class="cls-title">Today's Checklist</div>
-        <div class="cls-pct">${rec.checklistDone}/${rec.checklistTotal} done</div>
-      </div>
-      <div class="cls-dots">
-        ${DAILY_ITEMS.map((item,i)=>{
-          const done=dcState[item.id];
-          return `<div class="cls-dot ${done?'done':'empty'}" title="${item.text}"></div>`;
-        }).join('')}
-      </div>
-      <div style="margin-top:10px;font-family:var(--mono);font-size:9px;color:var(--ink3);">Green = done · Grey = pending</div>
-    </div>
-  </div>`;
-}
+// ─── DAILY VIEW
+function renderDaily() {
+  const pt = ptGrams;
+  const ptPct = Math.min(100, Math.round((pt / 155) * 100));
+  const chkDone = Object.values(dcState).filter(Boolean).length;
+  const chkPct = Math.round((chkDone / DAILY_ITEMS.length) * 100);
+  const circ = 264; // r=42
+  const ptOffset = circ * (1 - ptPct / 100);
+  const chkOffset = circ * (1 - chkPct / 100);
 
-function renderWeeklyView(){
-  // Get the week containing (today + offset weeks)
-  const pivot=new Date(TODAY);
-  pivot.setDate(pivot.getDate()+calWeekOffset*7);
-  // Sunday of that week
-  const sun=new Date(pivot);
-  sun.setDate(pivot.getDate()-pivot.getDay());
-  
-  const weekDays=[];
-  for(let i=0;i<7;i++){
-    const d=new Date(sun); d.setDate(sun.getDate()+i);
-    weekDays.push(d);
-  }
-  const weekLabel=sun.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+weekDays[6].toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  
-  const bars=weekDays.map(d=>{
-    const dk=dateKey(d);
-    const status=getDayStatus(dk);
-    const rec=getRecord(dk);
-    const isToday=dk===TODAY_KEY;
-    const pct=rec?Math.min(100,Math.round((rec.protein/155)*100)):0;
-    const barCls=status==='hit'?'hit':status==='partial'?'partial':status==='miss'?'miss':'';
-    const dayN=days[d.getDay()].slice(0,3).toUpperCase();
-    return `<div class="wday ${isToday?'is-today':''}" onclick="openCalDetail('${dk}')">
-      <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--ink3);text-align:center;margin-bottom:4px;">${pct>0?pct+'%':''}</div>
-      <div class="wday-bar-wrap">
-        <div class="wday-bar ${barCls} ${isToday?'today':''}" style="height:${Math.max(4,pct)}%"></div>
-      </div>
-      <div class="wday-name" style="font-family:var(--mono);font-size:8px;font-weight:700;color:${isToday?'var(--gold)':'var(--ink3)'};text-transform:uppercase;margin-top:6px;text-align:center;">${dayN}</div>
+  const checklistRows = DAILY_ITEMS.map(item => {
+    const done = dcState[item.id];
+    return `<div class="cal-log-row">
+      <div class="cal-log-item">${item.text}</div>
+      <div class="cal-log-status ${done?'status-done':'status-miss'}">${done?'✓ Done':'○ Miss'}</div>
     </div>`;
   }).join('');
-  
-  return `<div class="cal-weekly">
-    <div class="week-nav">
-      <button class="week-nav-btn" onclick="calWeekOffset--;renderCalView()">‹</button>
-      <div class="week-label">${weekLabel}</div>
-      <button class="week-nav-btn" onclick="calWeekOffset++;renderCalView()">›</button>
-    </div>
-    <div class="week-bars">${bars}</div>
-    <div class="week-legend">
-      <div class="wleg"><div class="wleg-dot" style="background:var(--forest)"></div>Goal Hit</div>
-      <div class="wleg"><div class="wleg-dot" style="background:var(--gold2)"></div>Partial</div>
-      <div class="wleg"><div class="wleg-dot" style="background:var(--firedl);border:1px solid var(--rule)"></div>Miss</div>
-      <div class="wleg"><div class="wleg-dot" style="background:var(--warm)"></div>No Data</div>
-    </div>
-    ${renderWeekSummary(weekDays)}
-  </div>`;
-}
 
-function renderWeekSummary(weekDays){
-  let hitDays=0,proteinTotal=0,datadays=0;
-  weekDays.forEach(d=>{
-    const dk=dateKey(d);
-    const rec=getRecord(dk);
-    if(rec){datadays++;proteinTotal+=rec.protein;if(rec.protein>=155)hitDays++;}
-  });
-  if(!datadays) return '';
-  return `<div style="background:white;border-radius:var(--r16);padding:16px;border:1.5px solid var(--rule);margin-top:16px;box-shadow:var(--e1);">
-    <div style="font-family:var(--serif);font-size:17px;font-weight:700;margin-bottom:12px;">Week Summary</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <div style="text-align:center;"><div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--forest);">${hitDays}</div><div style="font-family:var(--mono);font-size:8px;color:var(--ink3);">GOAL DAYS</div></div>
-      <div style="text-align:center;"><div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--gold2);">${datadays>0?Math.round(proteinTotal/datadays):0}g</div><div style="font-family:var(--mono);font-size:8px;color:var(--ink3);">AVG PROTEIN</div></div>
-      <div style="text-align:center;"><div style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ocean);">${datadays}</div><div style="font-family:var(--mono);font-size:8px;color:var(--ink3);">DAYS TRACKED</div></div>
-    </div>
-  </div>`;
-}
-
-function renderQuarterlyView(){
-  // Show the current month ± offset
-  const baseDate=new Date(TODAY.getFullYear(),TODAY.getMonth()+calQtrOffset,1);
-  const year=baseDate.getFullYear();
-  const month=baseDate.getMonth();
-  const monthName=baseDate.toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  
-  const firstDay=new Date(year,month,1).getDay();
-  const daysInMonth=new Date(year,month+1,0).getDate();
-  
-  const dowHeaders=['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="mg-dow">${d}</div>`).join('');
-  
-  let cells=Array(firstDay).fill(`<div class="mg-day empty"></div>`);
-  for(let d=1;d<=daysInMonth;d++){
-    const date=new Date(year,month,d);
-    const dk=dateKey(date);
-    const isToday=dk===TODAY_KEY;
-    const status=getDayStatus(dk);
-    cells.push(`<div class="mg-day ${status} ${isToday?'today-mark':''}" onclick="openCalDetail('${dk}')">${d}</div>`);
-  }
-  
-  return `<div class="cal-quarterly">
-    <div class="qtr-nav">
-      <button class="week-nav-btn" onclick="calQtrOffset--;renderCalView()">‹</button>
-      <div class="qtr-label">${monthName}</div>
-      <button class="week-nav-btn" onclick="calQtrOffset++;renderCalView()">›</button>
-    </div>
-    <div class="month-grid-wrap">
-      <div class="month-grid">${dowHeaders}${cells.join('')}</div>
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--warm);margin-top:8px;">
-      <div class="wleg"><div style="width:14px;height:14px;border-radius:4px;background:var(--forest);display:inline-block;"></div> <span style="font-family:var(--mono);font-size:9px;color:var(--ink3);margin-left:4px;">Goal Hit</span></div>
-      <div class="wleg"><div style="width:14px;height:14px;border-radius:4px;background:var(--gold2);display:inline-block;"></div> <span style="font-family:var(--mono);font-size:9px;color:var(--ink3);margin-left:4px;">Partial</span></div>
-      <div class="wleg"><div style="width:14px;height:14px;border-radius:4px;background:var(--firedl);border:1px solid rgba(194,58,40,.3);display:inline-block;"></div> <span style="font-family:var(--mono);font-size:9px;color:var(--ink3);margin-left:4px;">Miss</span></div>
-      <div class="wleg"><div style="width:14px;height:14px;border-radius:4px;background:var(--cream);border:1px solid var(--rule);display:inline-block;"></div> <span style="font-family:var(--mono);font-size:9px;color:var(--ink3);margin-left:4px;">No data</span></div>
-    </div>
-  </div>`;
-}
-
-function renderYearlyView(){
-  const year=TODAY.getFullYear();
-  const startDate=new Date(year,0,1);
-  // Align to Sunday
-  const startSunday=new Date(startDate);
-  startSunday.setDate(startDate.getDate()-startDate.getDay());
-  
-  const endDate=new Date(year,11,31);
-  const endSaturday=new Date(endDate);
-  endSaturday.setDate(endDate.getDate()+(6-endDate.getDay()));
-  
-  // Build week columns
-  const cols=[];
-  const monthLabels=[];
-  let cursor=new Date(startSunday);
-  let lastMonth=-1;
-  let colIdx=0;
-  
-  while(cursor<=endSaturday){
-    const col=[];
-    for(let r=0;r<7;r++){
-      const d=new Date(cursor);
-      const dk=dateKey(d);
-      const inYear=d.getFullYear()===year;
-      if(r===0&&inYear&&d.getMonth()!==lastMonth){
-        monthLabels.push({col:colIdx,label:d.toLocaleDateString('en-US',{month:'short'})});
-        lastMonth=d.getMonth();
-      }
-      const status=inYear?getDayStatus(dk):'';
-      col.push(`<div class="year-cell ${inYear?status:'empty'}" onclick="${inYear?`openCalDetail('${dk}')`:''}" title="${inYear?dk:''}"></div>`);
-      cursor.setDate(cursor.getDate()+1);
-    }
-    cols.push(`<div class="year-col">${col.join('')}</div>`);
-    colIdx++;
-  }
-  
-  // Count stats
-  let totalHit=0,totalPartial=0,totalMiss=0,totalDays=0;
-  for(let d=new Date(new Date(year,0,1));d.getFullYear()===year;d.setDate(d.getDate()+1)){
-    const s=getDayStatus(dateKey(new Date(d)));
-    if(s==='hit'){totalHit++;totalDays++;}
-    else if(s==='partial'){totalPartial++;totalDays++;}
-    else if(s==='miss'){totalMiss++;totalDays++;}
-  }
-  
-  return `<div class="cal-yearly">
-    <div class="yearly-title">${year} Progress</div>
-    <div class="yearly-sub">Tap any day for details · Green = protein ≥155g + checklist ≥80%</div>
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:8px;">
-      <div style="display:flex;gap:3px;margin-bottom:4px;padding-left:0;width:max-content;">
-        ${(()=>{
-          let lbl='';let lastC=-1;
-          monthLabels.forEach(m=>{
-            if(m.col>lastC){
-              lbl+=`<div style="font-family:var(--mono);font-size:8px;color:var(--ink3);width:${(m.col-Math.max(0,lastC))*15}px;overflow:hidden;">${m.label}</div>`;
-              lastC=m.col;
-            }
-          });
-          return lbl;
-        })()}
+  return `
+    <div class="cal-day-hero">
+      <div class="cal-day-date">${dateStr(NOW).toUpperCase()}</div>
+      <div class="cal-day-name">${days[TODAY_DOW]}</div>
+      <div class="cal-day-stats">
+        <div class="cal-day-stat">
+          <div class="cal-day-stat-val protein-color">${pt}g</div>
+          <div class="cal-day-stat-lbl">PROTEIN</div>
+        </div>
+        <div class="cal-day-stat">
+          <div class="cal-day-stat-val check-color">${chkDone}/${DAILY_ITEMS.length}</div>
+          <div class="cal-day-stat-lbl">CHECKS</div>
+        </div>
+        <div class="cal-day-stat">
+          <div class="cal-day-stat-val" style="color:#A8D8B4;">${Math.round((ptPct+chkPct)/2)}%</div>
+          <div class="cal-day-stat-lbl">SCORE</div>
+        </div>
       </div>
-      <div class="year-grid">${cols.join('')}</div>
     </div>
-    <div class="year-stats-row">
-      <div class="ystat"><div class="ystat-val">${totalHit}</div><div class="ystat-lbl">DAYS<br>GOAL HIT</div></div>
-      <div class="ystat"><div class="ystat-val">${totalPartial}</div><div class="ystat-lbl">DAYS<br>PARTIAL</div></div>
-      <div class="ystat"><div class="ystat-val">${totalDays>0?Math.round(totalHit/totalDays*100):0}%</div><div class="ystat-lbl">SUCCESS<br>RATE</div></div>
+
+    <div class="cal-ring-row">
+      <div class="cal-ring-card">
+        <div class="cal-ring-title">PROTEIN</div>
+        <svg width="90" height="90" viewBox="0 0 100 100" style="display:block;margin:0 auto;">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#EAE2D6" stroke-width="8"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#E09A16" stroke-width="8"
+            stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="${ptOffset}"
+            style="transform:rotate(-90deg);transform-origin:50px 50px;"/>
+        </svg>
+        <div class="cal-ring-val">${ptPct}%</div>
+        <div class="cal-ring-sub">${pt}g of 155g</div>
+      </div>
+      <div class="cal-ring-card">
+        <div class="cal-ring-title">CHECKLIST</div>
+        <svg width="90" height="90" viewBox="0 0 100 100" style="display:block;margin:0 auto;">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#EAE2D6" stroke-width="8"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#2D8A58" stroke-width="8"
+            stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="${chkOffset}"
+            style="transform:rotate(-90deg);transform-origin:50px 50px;"/>
+        </svg>
+        <div class="cal-ring-val">${chkPct}%</div>
+        <div class="cal-ring-sub">${chkDone} of ${DAILY_ITEMS.length}</div>
+      </div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:12px;align-items:center;">
-      <div style="font-family:var(--mono);font-size:9px;color:var(--ink3);">Less</div>
-      <div style="width:12px;height:12px;border-radius:2px;background:var(--warm);"></div>
-      <div style="width:12px;height:12px;border-radius:2px;background:var(--firedl);border:1px solid rgba(194,58,40,.3);"></div>
-      <div style="width:12px;height:12px;border-radius:2px;background:var(--gold2);"></div>
-      <div style="width:12px;height:12px;border-radius:2px;background:var(--forest);"></div>
-      <div style="font-family:var(--mono);font-size:9px;color:var(--ink3);">More</div>
+
+    <div class="cal-today-log" style="padding:0 18px;">
+      <div class="cal-log-title">CHECKLIST STATUS</div>
+      ${checklistRows}
     </div>
-  </div>`;
+    <div style="height:12px;"></div>
+  `;
 }
 
-function openCalDetail(dk){
-  const rec=getRecord(dk);
-  const d=new Date(dk+'T12:00:00');
-  $('cdpDate').textContent=d.toLocaleDateString('en-US',{weekday:'long'}).toUpperCase()+' · '+dk;
-  $('cdpTitle').textContent=d.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  if(rec){
-    const status=getDayStatus(dk);
-    const statusLabel={hit:'💚 Goal Met',partial:'🟡 Partial',miss:'🔴 Miss','no-data':'—'}[status]||'—';
-    $('cdpRows').innerHTML=`
-      <div class="cdp-row"><div class="cdp-lbl">STATUS</div><div class="cdp-val" style="font-size:14px;">${statusLabel}</div></div>
-      <div class="cdp-row"><div class="cdp-lbl">PROTEIN</div><div class="cdp-val">${rec.protein}g <span style="font-size:12px;color:var(--ink3);">/ 155g</span></div></div>
-      <div class="cdp-row"><div class="cdp-lbl">CHECKLIST</div><div class="cdp-val">${rec.checklistDone}/${rec.checklistTotal} <span style="font-size:12px;color:var(--ink3);">(${Math.round(rec.checklistDone/rec.checklistTotal*100)}%)</span></div></div>`;
-  } else {
-    $('cdpRows').innerHTML=`<div class="cdp-row"><div style="font-family:var(--mono);font-size:11px;color:var(--ink3);">No data recorded for this day yet.</div></div>`;
+// ─── WEEKLY VIEW
+function renderWeekly() {
+  // Build 7 days: Mon–Sun of current week (with offset)
+  const startOfWeek = new Date(NOW);
+  const dow = NOW.getDay(); // 0=Sun
+  const daysFromMon = (dow === 0) ? 6 : dow - 1;
+  startOfWeek.setDate(NOW.getDate() - daysFromMon + calWeekOffset * 7);
+
+  const weekDays = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeek);
+    d.setDate(startOfWeek.getDate() + i);
+    weekDays.push(d);
   }
-  $('calDetailPanel').classList.add('show');
-}
-function closeCalDetail(e){if(e.target===$('calDetailPanel'))$('calDetailPanel').classList.remove('show');}
 
-function exportCalData(){
-  // Collect all records
-  const records=[];
-  const keys=Object.keys(localStorage).filter(k=>k.startsWith('rec_'));
-  keys.sort().forEach(k=>{
-    try{const r=JSON.parse(localStorage.getItem(k));records.push({date:k.replace('rec_',''),...r});}catch(e){}
+  const isFuture = d => d > NOW && dateKey(d) !== dateKey(NOW);
+  const isToday = d => dateKey(d) === dateKey(NOW);
+
+  // Week label
+  const wkStart = weekDays[0];
+  const wkEnd = weekDays[6];
+  const wkLabel = wkStart.getDate() + ' ' + monthNames[wkStart.getMonth()] + ' – ' + wkEnd.getDate() + ' ' + monthNames[wkEnd.getMonth()];
+
+  // Stats
+  let totalPt = 0, totalChk = 0, daysWithData = 0;
+  weekDays.forEach(d => {
+    if (!isFuture(d)) {
+      const pt = parseInt(getProteinForDate(d)) || 0;
+      const chk = getChecklistForDate(d);
+      totalPt += pt;
+      totalChk += chk;
+      daysWithData++;
+    }
   });
-  if(!records.length){showToast('No data yet — start tracking!');return;}
-  const csv='date,protein,checklistDone,checklistTotal\n'+records.map(r=>`${r.date},${r.protein},${r.checklistDone},${r.checklistTotal}`).join('\n');
-  const blob=new Blob([csv],{type:'text/csv'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download='dhaka-stack-progress.csv';a.click();
-  showToast('Data exported as CSV');
+  const avgPt = daysWithData ? Math.round(totalPt / daysWithData) : 0;
+  const avgChk = daysWithData ? Math.round(totalChk / daysWithData) : 0;
+  const goalDays = weekDays.filter(d => !isFuture(d) && getProteinForDate(d) >= 155).length;
+
+  const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const dayGrid = weekDays.map((d, i) => {
+    const future = isFuture(d);
+    const today = isToday(d);
+    const pt = future ? 0 : (parseInt(getProteinForDate(d)) || 0);
+    const chk = future ? 0 : getChecklistForDate(d);
+    const ptH = Math.round(Math.min(100, (pt / 155) * 100) * 0.36); // max 36px
+    const chkH = Math.round((chk / DAILY_ITEMS.length) * 36);
+
+    return `<div class="cal-week-day ${today ? 'today' : ''}" style="opacity:${future?'0.4':'1'}">
+      <div class="cwday-name">${dayLabels[i]}</div>
+      <div class="cwday-num">${d.getDate()}</div>
+      <div class="cwday-bar-wrap">
+        <div class="cwday-bar protein-bar" style="height:${future?'2':ptH}px;"></div>
+        <div class="cwday-bar check-bar" style="height:${future?'2':chkH}px;"></div>
+      </div>
+      ${today ? '<div style="height:4px;background:var(--gold);border-radius:0 0 var(--r10) var(--r10);"></div>' : ''}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="cal-week-header">
+      <div class="cal-week-title">${wkLabel}</div>
+      <div class="cal-week-nav">
+        <div class="cal-nav-btn" onclick="calWeekNav(-1)">‹</div>
+        <div class="cal-nav-btn" onclick="calWeekNav(1)">›</div>
+      </div>
+    </div>
+    <div class="cal-week-grid">${dayGrid}</div>
+    <div class="cal-week-legend">
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--gold2)"></div>Protein</div>
+      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--green)"></div>Checklist</div>
+    </div>
+    <div class="cal-week-summary">
+      <div class="cal-log-title" style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;padding:0 0 0 0;">THIS WEEK</div>
+      <div class="cal-week-sum-grid">
+        <div class="cal-sum-card"><div class="cal-sum-val">${avgPt}g</div><div class="cal-sum-lbl">AVG PROTEIN/DAY</div></div>
+        <div class="cal-sum-card"><div class="cal-sum-val">${goalDays}/${daysWithData}</div><div class="cal-sum-lbl">DAYS HIT GOAL</div></div>
+        <div class="cal-sum-card"><div class="cal-sum-val">${totalPt}g</div><div class="cal-sum-lbl">TOTAL PROTEIN</div></div>
+        <div class="cal-sum-card"><div class="cal-sum-val">${avgChk}/${DAILY_ITEMS.length}</div><div class="cal-sum-lbl">AVG DAILY CHECKS</div></div>
+      </div>
+    </div>
+    <div style="height:12px;"></div>
+  `;
 }
 
-// Seed today's record on load
-saveDailyRecord();
+function calWeekNav(dir) {
+  calWeekOffset += dir;
+  renderCalView();
+}
 
-// ══════════════════════════════════════════
+// ─── QUARTERLY VIEW (13-week heatmap)
+function renderQuarterly() {
+  // Show last 13 weeks, Mon–Sun
+  const endDate = new Date(NOW);
+  const dow = NOW.getDay();
+  const toSunday = dow === 0 ? 0 : 7 - dow;
+  endDate.setDate(endDate.getDate() + toSunday);
+
+  const startDate = new Date(endDate);
+  startDate.setDate(endDate.getDate() - 13 * 7 + 1);
+
+  // Build month labels
+  const months = [];
+  let prevMonth = -1;
+  for (let w = 0; w < 13; w++) {
+    const wd = new Date(startDate);
+    wd.setDate(startDate.getDate() + w * 7);
+    if (wd.getMonth() !== prevMonth) {
+      months.push({w, label: monthNames[wd.getMonth()]});
+      prevMonth = wd.getMonth();
+    }
+  }
+
+  // Build grid
+  let grid = '';
+  for (let w = 0; w < 13; w++) {
+    const wd = new Date(startDate);
+    wd.setDate(startDate.getDate() + w * 7);
+    const weekLabel = monthNames[wd.getMonth()] + ' ' + wd.getDate();
+    let cells = `<div class="cal-qweek-label">W${13-w}</div>`;
+    for (let d = 0; d < 7; d++) {
+      const day = new Date(startDate);
+      day.setDate(startDate.getDate() + w * 7 + d);
+      const future = day > NOW;
+      const todayQ = dateKey(day) === dateKey(NOW);
+      const score = future ? -1 : getDayScore(day);
+      const level = score < 0 ? 'future' : scoreToLevel(score);
+      cells += `<div class="cal-qday level-${level} ${todayQ?'today-q':''}" title="${day.toDateString()}: ${score<0?'future':score+'%'}"></div>`;
+    }
+    grid += `<div class="cal-quarter-week">${cells}</div>`;
+  }
+
+  const legend = `
+    <div class="cal-quarter-legend">
+      <span>Less</span>
+      <div class="ql-box" style="background:var(--warm)"></div>
+      <div class="ql-box" style="background:#D4EDDA"></div>
+      <div class="ql-box" style="background:#A8D8B4"></div>
+      <div class="ql-box" style="background:#6DC48A"></div>
+      <div class="ql-box" style="background:var(--green)"></div>
+      <div class="ql-box" style="background:var(--forest)"></div>
+      <span>More</span>
+    </div>`;
+
+  // Streak calculation
+  let streak = 0;
+  for (let i = 0; i < 90; i++) {
+    const d = new Date(NOW);
+    d.setDate(NOW.getDate() - i);
+    if (getDayScore(d) >= 40) streak++;
+    else break;
+  }
+
+  return `
+    <div style="padding:0 18px 8px;">
+      <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">13-WEEK OVERVIEW</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--ink3);">Score = avg of protein % + checklist %</div>
+    </div>
+    <div class="cal-quarter-grid">${grid}</div>
+    ${legend}
+    <div class="cal-year-stats">
+      <div class="cal-year-stat"><div class="cal-year-stat-val">${streak}</div><div class="cal-year-stat-lbl">DAY STREAK</div></div>
+      <div class="cal-year-stat"><div class="cal-year-stat-val">${Math.round(streak * 155)}g</div><div class="cal-year-stat-lbl">PROTEIN IN STREAK</div></div>
+      <div class="cal-year-stat"><div class="cal-year-stat-val">${streak >= 7 ? '🔥' : streak >= 3 ? '⚡' : '🌱'}</div><div class="cal-year-stat-lbl">STATUS</div></div>
+    </div>
+    <div style="height:12px;"></div>
+  `;
+}
+
+// ─── YEARLY VIEW (month-by-month grid)
+function renderYearly() {
+  const year = NOW.getFullYear();
+  let html = '';
+
+  // Year stats
+  let yearPt = 0, yearDays = 0, yearGoalDays = 0;
+  for (let m = 0; m < 12; m++) {
+    const daysInMonth = new Date(year, m + 1, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const day = new Date(year, m, d);
+      if (day > NOW) continue;
+      yearDays++;
+      const pt = parseInt(getProteinForDate(day)) || 0;
+      yearPt += pt;
+      if (pt >= 155) yearGoalDays++;
+    }
+  }
+  const yearAvgPt = yearDays ? Math.round(yearPt / yearDays) : 0;
+
+  html += `
+    <div style="padding:0 18px 4px;">
+      <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;">${year} OVERVIEW</div>
+    </div>
+    <div class="cal-year-stats">
+      <div class="cal-year-stat"><div class="cal-year-stat-val">${yearAvgPt}g</div><div class="cal-year-stat-lbl">AVG PROTEIN/DAY</div></div>
+      <div class="cal-year-stat"><div class="cal-year-stat-val">${yearGoalDays}</div><div class="cal-year-stat-lbl">GOAL DAYS</div></div>
+      <div class="cal-year-stat"><div class="cal-year-stat-val">${yearDays}</div><div class="cal-year-stat-lbl">DAYS TRACKED</div></div>
+    </div>`;
+
+  html += '<div class="cal-year-section">';
+  for (let m = 0; m < 12; m++) {
+    const daysInMonth = new Date(year, m + 1, 0).getDate();
+    const firstDow = new Date(year, m, 1).getDay(); // 0=Sun
+    const offset = firstDow; // empty cells before 1st
+
+    html += `<div class="cal-year-month">
+      <div class="cal-year-month-name">${monthNames[m]} ${year}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px;">
+        ${['S','M','T','W','T','F','S'].map(l=>`<div style="font-family:var(--mono);font-size:7px;text-align:center;color:var(--ink3);padding:2px 0;">${l}</div>`).join('')}
+      </div>
+      <div class="cal-year-month-grid">`;
+
+    // Empty cells
+    for (let e = 0; e < offset; e++) html += `<div class="cal-yday empty"></div>`;
+
+    // Day cells
+    for (let d = 1; d <= daysInMonth; d++) {
+      const day = new Date(year, m, d);
+      const future = day > NOW;
+      const todayY = dateKey(day) === dateKey(NOW);
+      const score = future ? -1 : getDayScore(day);
+      const level = score < 0 ? 'future' : scoreToLevel(score);
+      html += `<div class="cal-yday level-${level} ${todayY?'today-y':''}" title="${d} ${monthNames[m]}: ${score<0?'upcoming':score+'%'}"></div>`;
+    }
+
+    html += `</div></div>`;
+  }
+  html += '</div>';
+
+  html += `
+    <div class="cal-quarter-legend">
+      <span>Less</span>
+      <div class="ql-box" style="background:var(--warm)"></div>
+      <div class="ql-box" style="background:#D4EDDA"></div>
+      <div class="ql-box" style="background:#A8D8B4"></div>
+      <div class="ql-box" style="background:#6DC48A"></div>
+      <div class="ql-box" style="background:var(--green)"></div>
+      <div class="ql-box" style="background:var(--forest)"></div>
+      <span>More</span>
+    </div>
+    <div style="height:12px;"></div>`;
+
+  return html;
+}
+
+// Initial calendar render
+renderCalView();
+
+// ══════════════════════════════════════════════════════
+// GUIDE ACCORDION
+// ══════════════════════════════════════════════════════
+function toggleAcc(id) {
+  const item = $('acc-' + id);
+  item.classList.toggle('open', !item.classList.contains('open'));
+}
+function expandAllGuide() {
+  document.querySelectorAll('.acc-item').forEach(el => el.classList.add('open'));
+}
+
+// ══════════════════════════════════════════════════════
 // NOTIFICATIONS
-// ══════════════════════════════════════════
-if('Notification' in window && Notification.permission==='default'){
-  setTimeout(()=>Notification.requestPermission(),3000);
+// ══════════════════════════════════════════════════════
+if ('Notification' in window && Notification.permission === 'default') {
+  setTimeout(() => Notification.requestPermission(), 3000);
 }
 
-// ══════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // PWA SERVICE WORKER
-// ══════════════════════════════════════════
-if('serviceWorker' in navigator){
-  const swCode=`
+// ══════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  const swCode = `
     const CACHE='dhaka-stack-v5';
     self.addEventListener('install',e=>{self.skipWaiting();});
     self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});
     self.addEventListener('fetch',e=>{
-      if(e.request.method!=='GET') return;
-      e.respondWith(caches.open(CACHE).then(cache=>
-        cache.match(e.request).then(cached=>{
-          const fresh=fetch(e.request).then(resp=>{if(resp&&resp.status===200)cache.put(e.request,resp.clone());return resp;}).catch(()=>cached);
-          return cached||fresh;
-        })
-      ));
-    });`;
-  try{
-    const blob=new Blob([swCode],{type:'application/javascript'});
+      if(e.request.method!=='GET')return;
+      e.respondWith(caches.open(CACHE).then(cache=>cache.match(e.request).then(cached=>{
+        const fresh=fetch(e.request).then(resp=>{if(resp&&resp.status===200)cache.put(e.request,resp.clone());return resp;}).catch(()=>cached);
+        return cached||fresh;
+      })));
+    });
+  `;
+  try {
+    const blob = new Blob([swCode], {type:'application/javascript'});
     navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-  }catch(e){}
+  } catch(e) {}
 }
 </script>
 </body>
